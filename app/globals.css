@@ -1,0 +1,211 @@
+@import "tailwindcss";
+
+@theme {
+  /* Site palette, sampled from the swatch image */
+  --color-greige: #e1d7cc;
+  --color-offwhite: #f7f2e9;
+  --color-gold: #a18041;
+  --color-gold-light: #d5c396;
+  /* Supporting tones */
+  --color-ink: #272522;
+  /* Komb Gold from the brand guidelines, used for the announcement bar */
+  --color-komb-gold: #a87e34;
+  --color-line: rgb(39 37 34 / 0.16);
+
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-caslon: var(--font-caslon-text), "Libre Caslon Text", Georgia, serif;
+  --font-sans: var(--font-roboto), Roboto, system-ui, sans-serif;
+
+  --container-site: 82rem;
+  --spacing-gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --spacing-section: clamp(4rem, 9vw, 7.5rem);
+}
+
+/* Text tones that shift with the background so every pairing meets WCAG AA:
+   accent = large display text (3:1), label = small gold text, muted = body (4.5:1). */
+@theme inline {
+  --color-accent: var(--accent);
+  --color-label: var(--label);
+  --color-muted: var(--muted);
+}
+
+:root {
+  /* fixed header = solid announcement bar + nav bar (the nav overlays the home hero) */
+  --bar-h: 2rem;
+  --nav-h: 4.25rem;
+  --header-h: calc(var(--bar-h) + var(--nav-h));
+  --accent: #a18041;
+  --label: #7e5b1e;
+  --muted: #6b6259;
+}
+
+.on-greige {
+  --accent: #8a6a2c;
+  --label: #6b4d17;
+  --muted: #575049;
+}
+
+@layer base {
+  html {
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    @apply bg-offwhite text-ink font-sans font-light leading-[1.65] antialiased;
+  }
+
+  h1,
+  h2 {
+    @apply font-display font-medium leading-[1.05] tracking-[-0.01em] text-balance;
+  }
+
+  h1 {
+    font-size: clamp(2.75rem, 6.2vw, 5rem);
+  }
+
+  h2 {
+    font-size: clamp(2rem, 4vw, 3.25rem);
+  }
+
+  h1 em,
+  h2 em {
+    @apply font-normal italic text-accent;
+  }
+
+  h3 {
+    @apply font-caslon text-[1.2rem] leading-[1.3];
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  .container-site {
+    @apply mx-auto w-full max-w-site px-gutter;
+  }
+
+  .eyebrow {
+    @apply text-[0.72rem] font-medium uppercase tracking-[0.22em] text-label;
+  }
+
+  .text-link {
+    @apply inline-block border-b border-gold pb-1 text-[0.8rem] font-medium uppercase tracking-[0.16em] hover:text-label;
+  }
+
+  /* Stacked lockup, as on the packaging: KOMB in the display serif with a
+     small, widely spaced HAIR in Roboto beneath it. The left padding offsets
+     the trailing letter-spacing so both lines stay optically centered. */
+  .wordmark {
+    @apply inline-flex flex-col items-center pl-[0.2em] font-display leading-none font-medium tracking-[0.2em] whitespace-nowrap text-gold;
+  }
+
+  .wordmark span {
+    @apply mt-[0.45em] pl-[0.6em] font-sans font-normal tracking-[0.6em] uppercase;
+    font-size: 0.32em;
+  }
+
+  /* Buy now is the darkest element on the page. */
+  .btn {
+    @apply inline-flex min-h-13 items-center justify-center rounded-full border border-ink px-9 text-[0.8rem] font-medium uppercase tracking-[0.18em] whitespace-nowrap transition-colors duration-200 disabled:cursor-default disabled:opacity-55;
+  }
+
+  .btn-primary {
+    @apply bg-ink text-offwhite enabled:hover:bg-black;
+  }
+
+  a.btn-primary:hover {
+    @apply bg-black;
+  }
+
+  .btn-outline {
+    @apply bg-transparent enabled:hover:bg-greige;
+  }
+
+  .btn-ghost {
+    @apply border-transparent px-2 underline decoration-gold underline-offset-[0.4em];
+  }
+
+  /* Arched frame, after the salon reference */
+  .arch {
+    @apply grid aspect-3/4 w-full place-items-center overflow-hidden rounded-t-full rounded-b-xs bg-offwhite;
+  }
+
+  .accordion summary {
+    @apply flex cursor-pointer list-none justify-between py-4.5 text-[0.78rem] font-medium uppercase tracking-[0.16em];
+  }
+
+  .accordion summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .accordion summary::after {
+    content: "+";
+    @apply text-lg leading-none font-light tracking-normal;
+  }
+
+  .accordion details[open] summary::after {
+    content: "−";
+  }
+}
+
+/* Dark fade behind the transparent header. Eased over many stops so it melts
+   into the image with no visible edge: 60% at the top, about 40% behind the
+   nav, then a long soft tail. */
+.hero-top-fade {
+  background: linear-gradient(
+    to bottom,
+    rgb(39 37 34 / 0.6) 0%,
+    rgb(39 37 34 / 0.52) 18%,
+    rgb(39 37 34 / 0.4) 38%,
+    rgb(39 37 34 / 0.27) 54%,
+    rgb(39 37 34 / 0.16) 68%,
+    rgb(39 37 34 / 0.08) 80%,
+    rgb(39 37 34 / 0.03) 91%,
+    rgb(39 37 34 / 0) 100%
+  );
+}
+
+/* Cart drawer: a native modal dialog that slides in from the right. */
+.cart-dialog {
+  translate: 100% 0;
+  transition:
+    translate 0.3s ease,
+    overlay 0.3s allow-discrete,
+    display 0.3s allow-discrete;
+}
+
+.cart-dialog[open] {
+  translate: 0 0;
+}
+
+@starting-style {
+  .cart-dialog[open] {
+    translate: 100% 0;
+  }
+}
+
+.cart-dialog::backdrop {
+  background: rgb(39 37 34 / 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
