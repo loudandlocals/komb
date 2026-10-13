@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Our Story",
   description:
     "Why Komb starts with the scalp, and who we make it for: women whose hair is changing through postpartum and perimenopause.",
   alternates: { canonical: "/our-story" },
-  openGraph: { url: "/our-story" },
+  openGraph: { url: "/our-story", images: [OG_IMAGE] },
 };
 
 export default function OurStoryPage() {
@@ -21,16 +22,16 @@ export default function OurStoryPage() {
       </header>
 
       <div className="grid items-start gap-[clamp(2rem,6vw,6rem)] md:grid-cols-[5fr_6fr]">
-        <div className="arch relative mx-auto max-w-96 md:max-w-none">
+        <div className="arch relative mx-auto max-w-96 md:max-w-none" data-reveal="image">
           <Image
-            src="/media/hero-poster.jpg"
-            alt=""
+            src="/images/steps/center-image.png"
+            alt="A hand reaching for the serum on a wooden bedside table, with the moisturizer and a hairbrush beside it"
             fill
             sizes="(min-width: 768px) 40vw, 24rem"
-            className="object-cover object-[40%_20%]"
+            className="object-cover object-[50%_75%]"
           />
         </div>
-        <div className="grid max-w-xl justify-items-start gap-5">
+        <div className="grid max-w-xl justify-items-start gap-5" data-reveal="stagger">
           <p className="text-[1.1rem] text-muted">
             Maybe it is a wider part, a thinner ponytail, or more hair in the shower
             than there used to be. Maybe your hair simply feels drier and harder to

@@ -1,86 +1,129 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Avocado, Juniper, Olive, Rosemary, Shea } from "@/components/Botanicals";
 import { BuyNowButton } from "@/components/BuyButtons";
+import { Faq } from "@/components/Faq";
 import { HeroVideo } from "@/components/HeroVideo";
-import { ProductArt } from "@/components/ProductArt";
-import { ProductCard } from "@/components/ProductCard";
+import { DifferentCarousel, type DifferentSlide } from "@/components/DifferentCarousel";
+import { IngredientStrip } from "@/components/IngredientStrip";
+import { ProductShowcase } from "@/components/ProductShowcase";
+import { StickyBuyBar } from "@/components/StickyBuyBar";
 import { ROUTINE_HANDLES } from "@/lib/catalog";
-import { formatMoney } from "@/lib/format";
+import { HOME_FAQ } from "@/lib/faq";
+import { INGREDIENTS } from "@/lib/ingredients";
 import { getProducts } from "@/lib/shopify";
+import { OG_IMAGE } from "@/lib/site";
+import type { Product } from "@/lib/types";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
-  openGraph: { url: "/" },
+  openGraph: { url: "/", images: [OG_IMAGE] },
 };
 
-const DIFFERENT = [
+// One slide per point: the photo in front of the carousel decides which of
+// these shows on the left.
+const DIFFERENT: DifferentSlide[] = [
   {
     title: "Scalp first",
     body: "A healthy haircare routine starts at the root. Ours begins with the scalp and continues through the lengths.",
+    image: "/images/benefits/scalp.jpg",
+    alt: "Close view of a hairline and scalp, with the hair combed smoothly back",
+    position: "object-center",
   },
   {
     title: "Made for changing hair",
     body: "Created with women in their 30s and 40s in mind, through postpartum, perimenopause and everything between.",
+    image: "/images/benefits/changing-hair.png",
+    alt: "A woman with long wavy brown hair holding a bottle of Komb Botanical Hair Serum",
+    position: "object-center",
   },
   {
     title: "Ingredients you can read",
     body: "Every ingredient is listed in full, in English and French, so you know what you are putting on your scalp and hair.",
+    image: "/images/benefits/ingredient.jpg",
+    alt: "Rosemary, olives, half an avocado, plant butter and juniper berries laid out from above",
+    position: "object-center",
   },
   {
     title: "Honest expectations",
     body: "No miracle promises. Just clear directions and a routine that helps your hair look and feel cared for.",
+    image: "/images/banner-2.png",
+    alt: "The serum and moisturizer displayed on top of their cartons",
+    position: "object-[45%_50%]",
   },
-];
-
-const BOTANICALS = [
-  { Art: Rosemary, name: "Rosemary oil", where: "In the serum", note: "An aromatic oil with a long history in scalp care rituals." },
-  { Art: Avocado, name: "Avocado oil", where: "In the serum", note: "A rich, cushioning oil that leads the serum's blend." },
-  { Art: Olive, name: "Olive oil", where: "In both", note: "A classic conditioning oil found in both formulas." },
-  { Art: Shea, name: "Shea & mango butters", where: "In the moisturizer", note: "Creamy butters that help lengths feel soft and smooth." },
-  { Art: Juniper, name: "Juniper berry oil", where: "In the serum", note: "A crisp botanical oil that rounds out the blend." },
 ];
 
 // Set to true to grade the hero photo toward the video's muted tone
 // (taupe wash at 15%, saturation 65%); false shows the photo's own colours.
 const MATCH_VIDEO_TONE = true;
+// The hero's Buy now sits over imagery, so it is white with ink text there.
+const HERO_BUTTON =
+  "border-white bg-white text-ink enabled:hover:border-greige enabled:hover:bg-greige";
 const sectionHead = "mb-[clamp(2.5rem,5vw,4rem)] grid justify-items-center gap-4 text-center";
-const inset = "px-[max(var(--spacing-gutter),calc((100vw-82rem)/2+var(--spacing-gutter)))]";
+
+function RoutineStep({ number, product }: { number: number; product: Product }) {
+  return (
+    <div>
+      <p aria-hidden className="font-caslon text-[1.6rem] leading-none text-accent italic">
+        0{number}
+      </p>
+      <h3 className="mt-2 text-[clamp(1.45rem,2.1vw,1.85rem)] leading-[1.1] tracking-[-0.02em] italic">
+        <Link href={`/products/${product.handle}`} className="hover:text-label">
+          {product.title}
+        </Link>
+      </h3>
+      <p className="mt-1.5 mb-2 font-caslon text-[0.9rem] text-label italic">{product.tagline}</p>
+      <p className="text-[0.88rem] text-muted">{product.directions}</p>
+    </div>
+  );
+}
 
 export default async function HomePage() {
   const products = await getProducts();
   const routine = ROUTINE_HANDLES.map((h) => products.find((p) => p.handle === h)).filter(
     (p) => p !== undefined
   );
-  const [serum, moisturizer] = routine;
-  const routineTotal = routine.length
-    ? {
-      amount: routine.reduce((n, p) => n + p.price.amount, 0),
-      currencyCode: routine[0].price.currencyCode,
-    }
-    : null;
 
-  const tiles = [
-    { href: "/products/botanical-hair-serum", kind: "serum" as const, image: serum?.imageUrl, title: "Scalp care", sub: "Nourish the foundation" },
-    { href: "/products/renewal-hair-moisturizer", kind: "moisturizer" as const, image: moisturizer?.imageUrl, title: "Lengths", sub: "Hydrate and smooth" },
-    { href: "/shop#accessories", kind: "brush" as const, image: undefined, title: "Accessories", sub: "Ties and brushes" },
+  const needs = [
+    {
+      href: "/products/botanical-hair-serum",
+      image: "/images/categories2.png",
+      alt: "Serum being applied from a dropper to the scalp along the hairline",
+      label: "Scalp care",
+      caption: "Scalp care: nourish the foundation",
+      position: "object-top",
+      product: "Botanical Hair Serum",
+    },
+    {
+      href: "/products/renewal-hair-moisturizer",
+      image: "/images/categories1.png",
+      alt: "Smooth, glossy lengths of hair swept over one shoulder",
+      label: "Lengths",
+      caption: "Lengths: hydrate and smooth",
+      position: "object-[50%_40%]",
+      product: "Renewal Hair Moisturizer",
+    },
   ];
 
   return (
     <>
       <section
         aria-labelledby="hero-title"
-        className="-mt-(--nav-h) flex flex-col md:h-[calc(100dvh-var(--bar-h))] md:min-h-160"
+        className="-mt-(--nav-h) flex h-[calc(100dvh-var(--bar-h))] min-h-140 flex-col md:min-h-160"
       >
         <div
           id="hero-media"
-          className="relative grid h-[calc(100dvh-11.5rem)] min-h-120 grid-rows-[2fr_3fr] md:h-auto md:min-h-0 md:flex-1 md:grid-cols-[2fr_3fr] md:grid-rows-1"
+          className="relative grid min-h-0 flex-1 grid-rows-[2fr_3fr] md:grid-cols-[2fr_3fr] md:grid-rows-1"
         >
           {/* Subtle top fade behind the transparent header */}
           <div
             aria-hidden
             className="pointer-events-none absolute inset-x-0 top-0 z-1 hero-top-fade h-[calc(var(--nav-h)+7rem)]"
+          />
+          {/* Progressive blur along the bottom edge; the copy sits above it */}
+          <div
+            aria-hidden
+            className="hero-bottom-blur pointer-events-none absolute inset-x-0 bottom-0 z-1 h-1/4"
           />
           <div className="relative overflow-hidden">
             <Image
@@ -101,86 +144,107 @@ export default async function HomePage() {
               aria-hidden
               className="pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-linear-to-t from-ink/55 via-ink/25 to-transparent max-md:hidden"
             />
-            <div className="absolute inset-x-gutter bottom-[clamp(1.25rem,4vw,3rem)] grid justify-items-start gap-4 max-md:hidden">
-              <p className="font-caslon text-[clamp(1.1rem,1.7vw,1.6rem)] leading-snug text-offwhite italic [text-shadow:0_1px_14px_rgb(39_37_34/0.6)]">
-                Nourish your scalp.
-                <br />
-                Soften your lengths.
+            <div className="absolute inset-x-gutter bottom-[clamp(1.25rem,4vw,3rem)] z-2 grid justify-items-start gap-4 max-md:hidden">
+              <p className="max-w-96 font-sans text-[clamp(0.95rem,1.25vw,1.2rem)] leading-normal font-normal tracking-[0.03em] text-offwhite [text-shadow:0_1px_14px_rgb(39_37_34/0.6)]">
+                Hair changes can feel personal. Begin with a simple routine that
+                nourishes your scalp and softens your lengths.
               </p>
               {routine.length === 2 && (
-                <BuyNowButton products={routine} ariaLabel="Buy now: the two-step routine" />
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                  <BuyNowButton
+                    products={routine}
+                    className={HERO_BUTTON}
+                    label="Buy the routine"
+                    showPrice
+                  />
+                  <p className="text-[0.8rem] font-normal text-offwhite [text-shadow:0_1px_10px_rgb(39_37_34/0.7)]">
+                    The two-step routine:
+                    <br />
+                    scalp serum + hair moisturizer
+                  </p>
+                </div>
               )}
             </div>
           </div>
 
           <div className="relative overflow-hidden">
             <HeroVideo />
+            <div className="absolute right-gutter bottom-[clamp(1.5rem,4vw,3rem)] left-gutter z-2 grid justify-items-start gap-5">
             <h1
               id="hero-title"
-              className="absolute right-gutter bottom-[clamp(1.5rem,4vw,3rem)] left-gutter font-caslon text-[clamp(2rem,4.1vw,3.9rem)] leading-[1.2] font-normal tracking-[0.01em] whitespace-nowrap text-offwhite italic [text-shadow:0_1px_18px_rgb(39_37_34/0.6)]"
+              className="font-caslon text-[clamp(1.95rem,4.4vw,4.4rem)] leading-none font-normal tracking-[-0.02em] whitespace-nowrap text-offwhite italic [text-shadow:0_1px_18px_rgb(39_37_34/0.6)]"
             >
-              <span className="block">Care that</span>
-              <span className="block pl-[3.2em]">starts at</span>
-              <span className="block pl-[1.6em]">the scalp</span>
+              <span className="block">
+                When <span className="text-[#E3D7CB]">hair changes</span>,
+              </span>
+              <span className="block pl-[2.4em]">care starts</span>
+              <span className="block pl-[1.2em]">at the scalp</span>
             </h1>
-          </div>
-        </div>
-
-        <div className="container-site flex flex-col-reverse gap-5 border-b border-line py-5 md:min-h-20 md:flex-row md:items-center md:justify-between md:gap-10 md:py-3">
-          <p className="max-w-160 text-[0.95rem] leading-normal text-muted">
-            A simple two-step routine: a botanical serum to nourish your scalp and a
-            renewal moisturizer for softer, smoother lengths. So you can feel like
-            yourself again.
-          </p>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 md:shrink-0 md:flex-nowrap">
-            {routineTotal && (
-              <p className="text-[0.85rem] whitespace-nowrap text-muted max-sm:w-full">
-                Serum + Moisturizer, {formatMoney(routineTotal)}
-              </p>
-            )}
+            <p className="-mt-2 max-w-72 text-[0.9rem] font-normal text-offwhite [text-shadow:0_1px_10px_rgb(39_37_34/0.7)] md:hidden">
+              A simple two-step routine to nourish your scalp and soften your lengths.
+            </p>
+            {/* Phones: the photo is too short for its copy block, so Buy now lives here */}
             {routine.length === 2 && (
               <BuyNowButton
                 products={routine}
-                className="max-sm:flex-1"
-                ariaLabel="Buy now: the two-step routine"
+                className={`md:hidden ${HERO_BUTTON}`}
+                label="Buy the routine"
+                showPrice
               />
             )}
-            <Link href="/shop" className="btn btn-ghost">
-              Explore
-            </Link>
+            </div>
           </div>
         </div>
+
       </section>
 
-      <section className="container-site py-section" aria-labelledby="collection-title">
-        <header className={sectionHead} data-reveal>
+      <section className="container-site pt-section pb-12" aria-labelledby="collection-title">
+        <header className={`${sectionHead} lg:mb-10!`} data-reveal>
           <p className="eyebrow">The collection</p>
           <h2 id="collection-title">
             The essentials, <em>start to ends</em>
           </h2>
         </header>
-        <div className="grid gap-[clamp(1rem,2vw,2rem)] sm:grid-cols-2 lg:grid-cols-4" data-reveal="stagger">
-          {products.map((p) => (
-            <ProductCard key={p.handle} product={p} />
-          ))}
-        </div>
+        <ProductShowcase products={products} />
+        {/* Facts straight from the label, close to the first products. */}
+        <ul
+          className="mt-[clamp(2.5rem,5vw,4rem)] flex flex-wrap justify-center gap-x-8 gap-y-2 text-center text-[0.72rem] font-medium tracking-[0.16em] text-muted uppercase"
+          data-reveal
+        >
+          <li>For all hair types</li>
+          <li>Full ingredient lists, in English and French</li>
+          <li>Made in USA</li>
+          <li>A Canadian company</li>
+        </ul>
       </section>
 
-      <section className="on-greige bg-greige py-section" aria-labelledby="needs-title">
-        <div className="container-site">
+      <section className="py-[clamp(3rem,6vw,5rem)]" aria-labelledby="needs-title">
+        {/* Full-width editorial grid: only a small side margin, no max width */}
+        <div className="px-4 md:px-6">
           <header className={sectionHead} data-reveal>
             <p className="eyebrow">Shop by need</p>
             <h2 id="needs-title">Where would you like to begin?</h2>
           </header>
-          <ul className="mx-auto grid max-w-80 gap-[clamp(1.25rem,3vw,3rem)] md:max-w-none md:grid-cols-3" data-reveal="stagger">
-            {tiles.map((t) => (
-              <li key={t.title}>
-                <Link href={t.href} className="group grid justify-items-center gap-1.5 text-center">
-                  <span className="arch mb-4 border border-gold-light transition-colors duration-300 group-hover:border-gold">
-                    <ProductArt kind={t.kind} imageUrl={t.image} alt="" className="w-[62%]" sizes="(min-width: 768px) 33vw, 80vw" />
+          <ul className="grid gap-x-[clamp(1rem,3vw,3rem)] gap-y-12 md:grid-cols-2" data-reveal="stagger">
+            {needs.map((n, i) => (
+              <li key={n.label}>
+                <Link href={n.href} className="group block">
+                  <span className="mb-4 flex items-baseline gap-3 text-[0.74rem] font-medium tracking-[0.2em] uppercase">
+                    <span>0{i + 1} /</span>
+                    <span>{n.caption}</span>
                   </span>
-                  <span className="font-display text-[1.9rem] leading-[1.1] font-medium">{t.title}</span>
-                  <span className="text-[0.74rem] tracking-[0.18em] text-muted uppercase">{t.sub}</span>
+                  <span className="relative block aspect-square overflow-hidden md:aspect-4/3">
+                    <Image
+                      src={n.image}
+                      alt={n.alt}
+                      fill
+                      sizes="(min-width: 768px) 50vw, 100vw"
+                      className={`object-cover transition-transform duration-700 group-hover:scale-[1.03] ${n.position}`}
+                    />
+                  </span>
+                  <span className="mt-4 inline-block border-b border-ink pb-0.5 text-[0.74rem] font-medium tracking-[0.16em] uppercase group-hover:border-gold">
+                    Shop {n.product}
+                  </span>
                 </Link>
               </li>
             ))}
@@ -188,72 +252,86 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="container-site py-section" aria-labelledby="different-title">
-        <header className={sectionHead} data-reveal>
-          <p className="eyebrow">Why we&rsquo;re different</p>
-          <h2 id="different-title">
-            A brand that <em>understands</em> the change
+      <section
+        aria-labelledby="different-title"
+        // --bleed is the distance from the content edge to the page edge, so
+        // the photo row can run off the right side of the screen.
+        className="py-section pl-(--bleed) [--bleed:max(var(--spacing-gutter),calc((100vw-82rem)/2+var(--spacing-gutter)))]"
+        data-reveal
+      >
+        <h2 id="different-title" className="sr-only">
+          Why we&rsquo;re different: a brand that understands the change
+        </h2>
+        <DifferentCarousel slides={DIFFERENT}>
+          {routine.length === 2 && (
+            <BuyNowButton products={routine} label="Buy the routine" showPrice />
+          )}
+        </DifferentCarousel>
+      </section>
+
+      <section id="routine" aria-labelledby="routine-title" className="container-site py-section">
+        <header className="mx-auto mb-[clamp(3rem,7vw,6rem)] grid max-w-[70%] justify-items-center gap-5 text-center max-md:max-w-none" data-reveal>
+          <p className="eyebrow">The routine</p>
+          <h2 id="routine-title" className="text-[clamp(1.9rem,4.2vw,3.5rem)]">
+            Two steps. <em>A few quiet minutes.</em> Serum for the scalp, then
+            moisturizer for the lengths.
           </h2>
         </header>
-        <ol className="grid gap-[clamp(1.5rem,3vw,3rem)] sm:grid-cols-2 lg:grid-cols-4" data-reveal="stagger">
-          {DIFFERENT.map((d, i) => (
-            <li key={d.title} className="grid content-start gap-2.5 border-t border-gold-light pt-6">
-              <span aria-hidden className="font-display text-[1.6rem] leading-none text-accent italic">
-                0{i + 1}
-              </span>
-              <h3>{d.title}</h3>
-              <p className="text-[0.95rem] text-muted">{d.body}</p>
-            </li>
-          ))}
-        </ol>
+
+        {/* Asymmetric collage: a small photo top left, a large one in the middle
+            and a small one bottom right, with each step's directions in the
+            empty space beside its photo. Stacks on phones. */}
+        <div className="grid gap-x-[clamp(1.5rem,4vw,4rem)] gap-y-10 md:grid-cols-[22fr_45fr_22fr] md:justify-between" data-reveal="stagger">
+          <div className="order-2 flex flex-col justify-between gap-8 md:order-none">
+            <div className="relative aspect-4/5">
+              <Image
+                src="/images/steps/1.png"
+                alt="Serum being applied with a dropper along the hair parting"
+                fill
+                sizes="(min-width: 768px) 22vw, 100vw"
+                className="object-cover"
+              />
+            </div>
+            {routine[0] && <RoutineStep number={1} product={routine[0]} />}
+          </div>
+
+          <div className="relative order-1 aspect-4/5 md:order-none">
+            <Image
+              src="/images/steps/center-image-3.png"
+              alt="The serum and moisturizer on a wooden tray beside a bathroom basin, with a stack of cotton pads"
+              fill
+              sizes="(min-width: 768px) 45vw, 100vw"
+              className="object-cover"
+            />
+          </div>
+
+          <div className="order-3 flex flex-col justify-between gap-8 max-md:flex-col-reverse md:order-none">
+            {routine[1] && <RoutineStep number={2} product={routine[1]} />}
+            <div className="relative aspect-4/5">
+              <Image
+                src="/images/steps/2.png"
+                alt="Moisturizer being worked through the lengths of damp hair, with the open jar in front"
+                fill
+                sizes="(min-width: 768px) 22vw, 100vw"
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </div>
+
+        {routine.length === 2 && (
+          <p className="mt-[clamp(2.5rem,5vw,4rem)] text-center">
+            <BuyNowButton products={routine} label="Buy the routine" showPrice />
+          </p>
+        )}
       </section>
 
       <section
-        id="routine"
-        aria-labelledby="routine-title"
-        className={`on-greige grid items-center gap-[clamp(2rem,6vw,6rem)] bg-greige py-section md:grid-cols-2 ${inset}`}
+        aria-labelledby="formulas-title"
+        // The photos are scaled past their cells; clip so they never widen the page.
+        className="overflow-x-clip py-section"
       >
-        <div className="arch relative mx-auto max-w-96 md:max-w-120" data-reveal>
-          <Image
-            src="/media/hero-poster.jpg"
-            alt=""
-            fill
-            sizes="(min-width: 768px) 30rem, 24rem"
-            className="scale-110 object-cover object-[40%_20%]"
-            data-parallax
-          />
-        </div>
-        <div className="grid justify-items-start gap-6" data-reveal>
-          <p className="eyebrow">The routine</p>
-          <h2 id="routine-title">
-            Two steps. <em>A few quiet minutes.</em>
-          </h2>
-          <ol className="mt-2 mb-4 grid gap-7">
-            {routine.map((p, i) => (
-              <li key={p.handle} className="grid grid-cols-[2.5rem_1fr] gap-4 border-t border-ink/20 pt-6">
-                <span aria-hidden className="font-display text-[2.4rem] leading-none text-accent italic">
-                  {i + 1}
-                </span>
-                <div>
-                  <h3>
-                    <Link href={`/products/${p.handle}`} className="hover:text-label">
-                      {p.title}
-                    </Link>
-                  </h3>
-                  <p className="mb-2 font-caslon text-[0.9rem] text-label italic">{p.tagline}</p>
-                  <p className="text-[0.95rem] text-muted">{p.directions}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-          {routine.length === 2 && (
-            <BuyNowButton products={routine} label="Buy now · the routine" ariaLabel="Buy now: the two-step routine" />
-          )}
-        </div>
-      </section>
-
-      <section className="container-site py-section" aria-labelledby="formulas-title">
-        <header className={sectionHead} data-reveal>
+        <header className={`${sectionHead} px-gutter`} data-reveal>
           <p className="eyebrow">Inside the formulas</p>
           <h2 id="formulas-title">
             Thoughtfully chosen, <em>plainly listed</em>
@@ -263,37 +341,68 @@ export default async function HomePage() {
             moisturizer. Here are a few you will find on the label.
           </p>
         </header>
-        <ul className="mb-12 grid grid-cols-2 gap-[clamp(1.25rem,2.5vw,2.5rem)] md:grid-cols-3 lg:grid-cols-5" data-reveal="stagger">
-          {BOTANICALS.map(({ Art, name, where, note }) => (
-            <li key={name} className="grid content-start justify-items-center gap-2 text-center">
-              <Art className="mb-2 h-auto w-22 text-gold" />
-              <h3>{name}</h3>
-              <p className="eyebrow">{where}</p>
-              <p className="text-[0.9rem] text-muted">{note}</p>
-            </li>
-          ))}
-        </ul>
-        <p className="text-center">
-          <Link href="/ingredients" className="text-link">
-            Read the full ingredient lists
-          </Link>
-        </p>
+        {/* Not wrapped in a reveal animation: its transform would isolate the
+            photos and stop them blending into the page background. */}
+        <IngredientStrip
+          items={INGREDIENTS}
+          links={[
+            { href: "/products/botanical-hair-serum#full-ingredients", label: "Serum ingredients" },
+            { href: "/products/renewal-hair-moisturizer#full-ingredients", label: "Moisturizer ingredients" },
+          ]}
+        />
       </section>
 
-      <section className="on-greige bg-greige py-section" aria-labelledby="promise-title">
-        <div className="container-site grid max-w-3xl! justify-items-center gap-8 text-center" data-reveal>
-          <h2 id="promise-title" className="eyebrow font-sans!">
-            Our promise
-          </h2>
-          <p className="font-display text-[clamp(1.6rem,3.2vw,2.5rem)] leading-tight text-balance italic">
-            Hair changes can feel personal. We won&rsquo;t promise miracles. We will
-            give you a nourishing routine, clear directions and honest expectations.
-          </p>
-          <Link href="/our-story" className="text-link">
-            Read our story
-          </Link>
+      <Faq
+        id="faq-title"
+        title={
+          <>
+            Good to know, <em>before you begin</em>
+          </>
+        }
+        items={HOME_FAQ}
+      />
+
+      <section aria-labelledby="promise-title" className="container-site pb-section">
+        {/* No panel: the transparent cut-out of the basket, with its own soft
+            shadow, sits straight on the page background beside the text. */}
+        <div className="grid items-center gap-x-[clamp(2rem,6vw,6rem)] gap-y-8 text-ink md:grid-cols-[11fr_9fr]">
+          <div className="relative mx-auto aspect-square w-full max-w-md md:max-w-none" data-reveal="image">
+            <Image
+              src="/images/box-cutout.png"
+              alt="The serum and moisturizer in a woven basket beside a folded towel"
+              fill
+              sizes="(min-width: 768px) 46vw, 100vw"
+              className="object-contain"
+            />
+          </div>
+
+          <div>
+            <div className="grid justify-items-start gap-7" data-reveal>
+              <h2 id="promise-title" className="eyebrow font-sans! text-ink! not-italic">
+                Our promise
+              </h2>
+              <p className="font-caslon text-[clamp(1.4rem,2.3vw,2.1rem)] leading-[1.2] tracking-[-0.02em] italic">
+                Hair changes can feel personal. We won&rsquo;t promise miracles. We will
+                give you a nourishing routine, clear directions and honest expectations.
+              </p>
+              <div className="flex flex-wrap items-center gap-x-7 gap-y-4">
+                {routine.length === 2 && (
+                  <BuyNowButton
+                    products={routine}
+                    label="Buy the routine"
+                    showPrice
+                  />
+                )}
+                <Link href="/our-story" className="text-link border-ink! hover:text-ink!">
+                  Read our story
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
+
+      {routine.length === 2 && <StickyBuyBar products={routine} />}
     </>
   );
 }

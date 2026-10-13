@@ -56,7 +56,7 @@ export function CartDrawer() {
                 <div>
                   <p className="font-caslon">{item.title}</p>
                   {item.size && <p className="text-[0.82rem] text-muted">{item.size}</p>}
-                  <div className="mt-2.5 inline-flex items-center gap-1 rounded-full border border-ink/50">
+                  <div className="mt-2.5 inline-flex items-center gap-1 border border-ink/50">
                     <button
                       type="button"
                       className="size-9"

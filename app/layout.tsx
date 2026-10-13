@@ -6,7 +6,7 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { JsonLd } from "@/components/JsonLd";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { SITE } from "@/lib/site";
+import { OG_IMAGE, SITE } from "@/lib/site";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -25,7 +25,7 @@ const caslon = Libre_Caslon_Text({
 });
 const roboto = Roboto({
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["300", "400", "500", "700"],
   variable: "--font-roboto",
   display: "swap",
 });
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     locale: "en_CA",
     title: `${SITE.name} | Scalp and haircare, starting at the root`,
     description: SITE.description,
-    images: [{ url: "/media/hero-poster.jpg", width: 1664, height: 1248, alt: "A woman with long, softly waved hair" }],
+    images: [OG_IMAGE],
   },
   twitter: { card: "summary_large_image" },
 };

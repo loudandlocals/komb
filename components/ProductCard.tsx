@@ -10,9 +10,8 @@ export function ProductCard({ product }: { product: Product }) {
     <article className="group flex flex-col gap-4">
       <Link
         href={href}
-        tabIndex={-1}
-        aria-hidden
-        className="on-greige grid aspect-4/5 place-items-center overflow-hidden rounded-xs bg-greige"
+        aria-label={`View details: ${product.title}`}
+        className="group/media on-greige relative grid aspect-4/5 place-items-center overflow-hidden rounded-xs bg-greige"
       >
         <ProductArt
           kind={product.kind}
@@ -20,6 +19,9 @@ export function ProductCard({ product }: { product: Product }) {
           alt=""
           className="w-[70%] transition-transform duration-500 group-hover:-translate-y-1"
         />
+        <span aria-hidden className="btn media-cta bottom-6">
+          View details
+        </span>
       </Link>
       <div className="grid flex-1 content-start gap-1.5">
         {product.step && <p className="eyebrow">{product.step}</p>}

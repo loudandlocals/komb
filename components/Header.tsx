@@ -8,7 +8,6 @@ import { useCart } from "./CartProvider";
 const NAV = [
   { href: "/shop", label: "Shop" },
   { href: "/#routine", label: "The Routine" },
-  { href: "/ingredients", label: "Ingredients" },
   { href: "/our-story", label: "Our Story" },
 ];
 
@@ -55,7 +54,7 @@ export function Header() {
       className={`fixed inset-x-0 top-0 z-20 border-b transition-colors duration-300 ${
         clear
           ? "border-transparent bg-transparent font-medium text-offwhite [text-shadow:0_1px_10px_rgb(39_37_34/0.7)] [&_:focus-visible]:outline-offwhite"
-          : "border-line bg-offwhite/75 text-ink backdrop-blur-md"
+          : "border-line bg-offwhite text-ink"
       }`}
     >
       <p className="flex h-(--bar-h) items-center justify-center bg-komb-gold px-4 font-caslon text-[0.8rem] font-normal tracking-[0.04em] text-white italic [text-shadow:none]">
@@ -100,7 +99,6 @@ export function Header() {
           type="button"
           className={`${navText} justify-self-end py-2`}
           aria-haspopup="dialog"
-          aria-label={`Cart, ${count} ${count === 1 ? "item" : "items"}`}
           onClick={open}
         >
           Cart
@@ -111,6 +109,8 @@ export function Header() {
           >
             {count}
           </span>
+          {/* The spoken name starts with the visible "Cart 0", as speech-input users expect. */}
+          <span className="sr-only">{count === 1 ? " item" : " items"}</span>
         </button>
       </div>
     </header>

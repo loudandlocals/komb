@@ -10,6 +10,9 @@
   --color-ink: #272522;
   /* Komb Gold from the brand guidelines, used for the announcement bar */
   --color-komb-gold: #a87e34;
+  /* Dark warm brown for the footer panel. Cream text is 10.4:1 on it and
+     light gold 6.6:1, so both pass AA. */
+  --color-umber: #42372d;
   --color-line: rgb(39 37 34 / 0.16);
 
   --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
@@ -60,22 +63,26 @@
     @apply bg-offwhite text-ink font-sans font-light leading-[1.65] antialiased;
   }
 
+  /* Shared heading style for every page and section: Libre Caslon Text italic,
+     sentence case, tight letter spacing. Line height is a touch above the hero
+     title's 1.0 so longer headings that wrap never collide. */
   h1,
   h2 {
-    @apply font-display font-medium leading-[1.05] tracking-[-0.01em] text-balance;
+    @apply font-caslon font-normal leading-[1.08] tracking-[-0.02em] text-balance italic;
   }
 
   h1 {
-    font-size: clamp(2.75rem, 6.2vw, 5rem);
+    font-size: clamp(2.2rem, 5vw, 4rem);
   }
 
   h2 {
     font-size: clamp(2rem, 4vw, 3.25rem);
   }
 
+  /* The whole heading is italic now, so emphasis is carried by colour alone. */
   h1 em,
   h2 em {
-    @apply font-normal italic text-accent;
+    @apply text-accent;
   }
 
   h3 {
@@ -117,9 +124,10 @@
     font-size: 0.32em;
   }
 
-  /* Buy now is the darkest element on the page. */
+  /* One shared button shape for the whole site: a bordered rectangle with
+     square corners. Buy now is the darkest element on the page. */
   .btn {
-    @apply inline-flex min-h-13 items-center justify-center rounded-full border border-ink px-9 text-[0.8rem] font-medium uppercase tracking-[0.18em] whitespace-nowrap transition-colors duration-200 disabled:cursor-default disabled:opacity-55;
+    @apply inline-flex min-h-13 items-center justify-center rounded-none border border-ink px-9 text-[0.8rem] font-medium uppercase tracking-[0.18em] whitespace-nowrap transition-colors duration-200 disabled:cursor-default disabled:opacity-55;
   }
 
   .btn-primary {
@@ -132,6 +140,12 @@
 
   .btn-outline {
     @apply bg-transparent enabled:hover:bg-greige;
+  }
+
+  /* "View details" label that fades in over a product image when the image
+     link is hovered or focused. Use with `btn`, and put `group/media` on the link. */
+  .media-cta {
+    @apply pointer-events-none absolute left-1/2 min-h-10 -translate-x-1/2 bg-offwhite/90 px-5 text-[0.7rem] opacity-0 transition-opacity duration-300 group-hover/media:opacity-100 group-focus-visible/media:opacity-100;
   }
 
   .btn-ghost {
@@ -151,13 +165,16 @@
     display: none;
   }
 
+  /* Chevron that turns as the row opens. */
   .accordion summary::after {
-    content: "+";
-    @apply text-lg leading-none font-light tracking-normal;
+    content: "";
+    @apply mt-0.5 mr-1 size-2 shrink-0 self-center border-r border-b border-ink transition-[rotate,translate] duration-350 ease-out;
+    rotate: 45deg;
   }
 
   .accordion details[open] summary::after {
-    content: "−";
+    rotate: -135deg;
+    translate: 0 0.2rem;
   }
 }
 
@@ -178,6 +195,15 @@
   );
 }
 
+/* Soft blur of the imagery along the bottom of the hero: 8px at the bottom
+   edge, eased to nothing at the top of the band so there is no visible line. */
+.hero-bottom-blur {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  -webkit-mask-image: linear-gradient(to top, #000 0%, rgb(0 0 0 / 0.85) 22%, rgb(0 0 0 / 0.55) 45%, rgb(0 0 0 / 0.25) 68%, rgb(0 0 0 / 0.08) 86%, transparent 100%);
+  mask-image: linear-gradient(to top, #000 0%, rgb(0 0 0 / 0.85) 22%, rgb(0 0 0 / 0.55) 45%, rgb(0 0 0 / 0.25) 68%, rgb(0 0 0 / 0.08) 86%, transparent 100%);
+}
+
 /* Cart drawer: a native modal dialog that slides in from the right. */
 .cart-dialog {
   translate: 100% 0;
@@ -195,6 +221,58 @@
   .cart-dialog[open] {
     translate: 100% 0;
   }
+}
+
+/* Accordion rows ease open and closed: the height animates to the content's
+   natural size and the text fades with it. Browsers without ::details-content
+   simply open instantly, and reduced motion makes it instant everywhere. */
+.accordion {
+  interpolate-size: allow-keywords;
+}
+
+.accordion details::details-content {
+  height: 0;
+  opacity: 0;
+  overflow: clip;
+  transition:
+    height 0.35s ease,
+    opacity 0.35s ease,
+    content-visibility 0.35s allow-discrete;
+}
+
+.accordion details[open]::details-content {
+  height: auto;
+  opacity: 1;
+}
+
+/* Product page panel: fades in when the page or product changes. */
+@keyframes panel-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Ingredient description on phones: a modal sheet that slides up from the bottom. */
+.sheet-dialog {
+  translate: 0 100%;
+  transition:
+    translate 0.3s ease,
+    overlay 0.3s allow-discrete,
+    display 0.3s allow-discrete;
+}
+
+.sheet-dialog[open] {
+  translate: 0 0;
+}
+
+@starting-style {
+  .sheet-dialog[open] {
+    translate: 0 100%;
+  }
+}
+
+.sheet-dialog::backdrop {
+  background: rgb(39 37 34 / 0.4);
 }
 
 .cart-dialog::backdrop {

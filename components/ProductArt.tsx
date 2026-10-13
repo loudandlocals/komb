@@ -1,20 +1,22 @@
 import Image from "next/image";
 import type { ProductKind } from "@/lib/types";
 
-// Placeholder product illustrations, drawn from the packaging description.
-// Replaced automatically by the Shopify product image once one exists.
+// Shows the product photo when there is one (Shopify image or the local photo
+// in public/products); otherwise falls back to a simple illustration.
 export function ProductArt({
   kind,
   imageUrl,
   alt,
   className = "w-[70%]",
   sizes = "(min-width: 1024px) 25vw, 50vw",
+  priority = false,
 }: {
   kind: ProductKind;
   imageUrl?: string;
   alt: string;
   className?: string;
   sizes?: string;
+  priority?: boolean;
 }) {
   if (imageUrl) {
     return (
@@ -24,7 +26,8 @@ export function ProductArt({
         width={800}
         height={1000}
         sizes={sizes}
-        className="size-full object-cover"
+        priority={priority}
+        className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
       />
     );
   }
@@ -49,7 +52,7 @@ const wordmark = {
   textAnchor: "middle" as const,
 };
 
-const ART: Record<ProductKind, React.ReactNode> = {
+const ART: Partial<Record<ProductKind, React.ReactNode>> = {
   serum: (
     <g>
       {/* dropper bulb and bamboo collar */}
@@ -93,27 +96,6 @@ const ART: Record<ProductKind, React.ReactNode> = {
       <text x="120" y="213" fontSize="7" letterSpacing="4" {...wordmark}>HAIR</text>
       <path d="M96 224h48" stroke="#A18041" strokeWidth=".6" />
       <text x="120" y="238" fontSize="6" fill="#272522" textAnchor="middle" letterSpacing=".8">RENEWAL HAIR MOISTURIZER</text>
-    </g>
-  ),
-  ties: (
-    <g fill="none" strokeWidth="13">
-      <ellipse cx="96" cy="160" rx="42" ry="46" stroke="#D5C396" />
-      <ellipse cx="146" cy="186" rx="42" ry="46" stroke="#E1D7CC" />
-      <ellipse cx="118" cy="216" rx="42" ry="46" stroke="#A18041" opacity=".8" />
-    </g>
-  ),
-  brush: (
-    <g>
-      <rect x="110" y="170" width="20" height="100" rx="10" fill="#CF9356" />
-      <ellipse cx="120" cy="108" rx="52" ry="74" fill="#CF9356" />
-      <ellipse cx="120" cy="108" rx="40" ry="62" fill="#EFE4D3" />
-      <g fill="#272522" opacity=".55">
-        {[64, 82, 100, 118, 136, 154].flatMap((y) =>
-          [96, 108, 120, 132, 144].map((x) => (
-            <circle key={`${x}-${y}`} cx={x} cy={y} r="1.8" />
-          ))
-        )}
-      </g>
     </g>
   ),
 };

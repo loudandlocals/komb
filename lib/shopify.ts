@@ -1,5 +1,5 @@
 import "server-only";
-import { CONTENT, MOCK_PRODUCTS } from "./catalog";
+import { CONTENT, LOCAL_IMAGES, MOCK_PRODUCTS } from "./catalog";
 import type { CheckoutLine, Product, ProductContent } from "./types";
 
 const domain = process.env.SHOPIFY_STORE_DOMAIN;
@@ -60,8 +60,8 @@ type ShopifyProduct = {
 
 function fallbackContent(p: ShopifyProduct): ProductContent {
   return {
-    kind: "ties",
-    category: "accessories",
+    kind: "other",
+    category: "other",
     summary: p.description,
     benefits: [],
   };
@@ -79,8 +79,9 @@ function toProduct(p: ShopifyProduct): Product | null {
       currencyCode: variant.price.currencyCode,
     },
     availableForSale: p.availableForSale && variant.availableForSale,
-    imageUrl: p.featuredImage?.url,
-    imageAlt: p.featuredImage?.altText ?? p.title,
+    imageUrl: p.featuredImage?.url ?? LOCAL_IMAGES[p.handle]?.url,
+    pdpImageUrl: p.featuredImage ? undefined : LOCAL_IMAGES[p.handle]?.pdpUrl,
+    imageAlt: p.featuredImage?.altText ?? LOCAL_IMAGES[p.handle]?.alt ?? p.title,
     ...(CONTENT[p.handle] ?? fallbackContent(p)),
   };
 }

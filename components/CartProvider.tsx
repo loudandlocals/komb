@@ -8,7 +8,8 @@ import {
   useMemo,
   useState,
 } from "react";
-import type { CheckoutLine, Money, ProductKind } from "@/lib/types";
+import { useRouter } from "next/navigation";
+import type { Money, ProductKind } from "@/lib/types";
 
 export type CartItem = {
   variantId: string;
@@ -32,14 +33,13 @@ type CartContextValue = {
   close: () => void;
   add: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
   setQuantity: (variantId: string, quantity: number) => void;
-  checkout: (lines?: CheckoutLine[]) => Promise<void>;
+  checkout: (lines?: CartItem[]) => Promise<void>;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
 const STORAGE_KEY = "komb-cart";
 
-const MOCK_NOTICE =
-  "Preview mode: checkout opens on Shopify once the store is connected.";
+export const CHECKOUT_PREVIEW_KEY = "komb-checkout-preview";
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -47,6 +47,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     try {
@@ -87,25 +88,37 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  // Sends the given items (the whole cart by default) to checkout. With Shopify
+  // connected this redirects to the hosted checkout; in preview mode it goes
+  // to the placeholder checkout page with the same items.
   const checkout = useCallback<CartContextValue["checkout"]>(
     async (lines) => {
-      const payload =
-        lines ?? items.map((i) => ({ variantId: i.variantId, quantity: i.quantity }));
-      if (payload.length === 0) return;
+      const selected = lines ?? items;
+      if (selected.length === 0) return;
       setPending(true);
       setNotice(null);
       try {
         const res = await fetch("/api/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ lines: payload }),
+          body: JSON.stringify({
+            lines: selected.map((i) => ({ variantId: i.variantId, quantity: i.quantity })),
+          }),
         });
         const data = await res.json();
         if (data.url) {
           window.location.assign(data.url);
           return;
         }
-        setNotice(data.mock ? MOCK_NOTICE : data.error ?? "Something went wrong.");
+        if (data.mock) {
+          try {
+            sessionStorage.setItem(CHECKOUT_PREVIEW_KEY, JSON.stringify(selected));
+          } catch {}
+          setIsOpen(false);
+          router.push("/checkout");
+          return;
+        }
+        setNotice(data.error ?? "Something went wrong.");
         setIsOpen(true);
       } catch {
         setNotice("We couldn't start checkout. Please try again.");
@@ -114,7 +127,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         setPending(false);
       }
     },
-    [items]
+    [items, router]
   );
 
   const value = useMemo<CartContextValue>(() => {
