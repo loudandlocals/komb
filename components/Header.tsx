@@ -58,7 +58,7 @@ export function Header() {
           : "border-line bg-offwhite text-ink"
       }`}
     >
-      <p className="flex h-(--bar-h) items-center justify-center bg-komb-gold px-4 font-caslon text-[0.8rem] font-normal tracking-[0.04em] text-white italic [text-shadow:none]">
+      <p className="flex h-(--bar-h) items-center justify-center bg-umber px-4 font-caslon text-[0.8rem] font-normal tracking-[0.04em] text-offwhite italic [text-shadow:none]">
         Nourish. Restore. Flourish.
       </p>
       <div className="container-site grid h-17 grid-cols-[1fr_auto_1fr] items-center">
