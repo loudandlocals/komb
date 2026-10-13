@@ -11,6 +11,10 @@ export const OG_IMAGE = {
 // the store is connected this falls back to the placeholder page at /account.
 export const ACCOUNT_URL = process.env.NEXT_PUBLIC_SHOPIFY_ACCOUNT_URL || "/account";
 
+// The privacy policy does not exist yet. Set its path here (for example
+// "/privacy") and the email sign-up's consent line links to it.
+export const PRIVACY_URL = "";
+
 export const SITE = {
   name: "Komb Hair",
   url: "https://www.komb.ca",

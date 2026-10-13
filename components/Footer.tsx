@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SITE } from "@/lib/site";
+import { NewsletterForm } from "./NewsletterForm";
 
 const NAV = [
   { href: "/shop", label: "Shop" },
@@ -113,6 +114,22 @@ export function Footer() {
             </a>
           </div>
         </div>
+
+        <section
+          aria-labelledby="newsletter-title"
+          className="mt-14 grid gap-x-10 gap-y-6 border-t border-komb-gold/70 pt-10 md:grid-cols-[1fr_minmax(0,1.4fr)]"
+          data-reveal
+        >
+          <h2
+            id="newsletter-title"
+            className="font-caslon text-[clamp(1.4rem,2.2vw,1.9rem)] leading-tight tracking-[-0.01em] text-offwhite"
+          >
+            Notes on scalp care,
+            <br />
+            <em className="text-gold-light">new arrivals and routine tips.</em>
+          </h2>
+          <NewsletterForm />
+        </section>
 
         <div className="mt-12 grid gap-4 border-t border-komb-gold/70 pt-6 text-[0.78rem] text-offwhite/80 md:grid-cols-[auto_1fr] md:gap-10">
           <p className="whitespace-nowrap">© {new Date().getFullYear()} Komb Hair Inc.</p>
