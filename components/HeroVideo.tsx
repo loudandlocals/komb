@@ -4,18 +4,35 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 // Looping boomerang hero video (pre-rendered forward then reverse, so the loop
-// is seamless). The poster shows first; the video is fetched afterwards and
-// only plays when the visitor has not asked for reduced motion. It can always
+// is seamless). The poster shows first. The video is fetched only once the
+// page has finished loading and the browser is idle, so it never competes
+// with the first paint; phones get a smaller file. It only plays when the
+// visitor has not asked for reduced motion. It can always
 // be paused: by clicking or tapping it, or from the keyboard (WCAG 2.2.2).
 export function HeroVideo() {
   const ref = useRef<HTMLVideoElement>(null);
   const [enabled, setEnabled] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const [src, setSrc] = useState("/media/hero-boomerang.mp4");
 
   useEffect(() => {
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setEnabled(true);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      setSrc("/media/hero-boomerang-mobile.mp4");
     }
+    let idle = 0;
+    const start = () => {
+      idle = window.requestIdleCallback
+        ? window.requestIdleCallback(() => setEnabled(true), { timeout: 3000 })
+        : window.setTimeout(() => setEnabled(true), 1200);
+    };
+    if (document.readyState === "complete") start();
+    else window.addEventListener("load", start, { once: true });
+    return () => {
+      window.removeEventListener("load", start);
+      if (window.cancelIdleCallback) window.cancelIdleCallback(idle);
+      else window.clearTimeout(idle);
+    };
   }, []);
 
   const toggle = () => {
@@ -35,7 +52,7 @@ export function HeroVideo() {
         src="/media/hero-poster.jpg"
         alt="A woman with long, softly waved hair moving in a light breeze"
         fill
-        sizes="(min-width: 768px) 85vw, 120vw"
+        sizes="(min-width: 768px) 72vw, 100vw"
         // The largest element on a phone screen, so it loads first.
         priority
         onClick={toggle}
@@ -56,7 +73,7 @@ export function HeroVideo() {
           onClick={toggle}
           className="absolute inset-0 size-full origin-[45%_40%] translate-x-[7%] scale-120 object-cover object-[16%_30%]"
         >
-          <source src="/media/hero-boomerang.mp4" type="video/mp4" />
+          <source src={src} type="video/mp4" />
         </video>
       )}
       {/* No visible control: clicking or tapping the video pauses it, and this

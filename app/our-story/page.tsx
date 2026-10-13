@@ -53,7 +53,7 @@ export default function OurStoryPage() {
             scalp care and healthier-looking hair. It is not a treatment for hair
             loss.
           </p>
-          <p className="font-display text-[1.75rem] text-accent italic">
+          <p className="[font-family:var(--font-cormorant-italic),Georgia,serif] text-[1.75rem] text-accent italic">
             Nourish. Restore. Flourish.
           </p>
           <Link href="/shop" className="btn btn-primary">

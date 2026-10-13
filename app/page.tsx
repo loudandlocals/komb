@@ -113,7 +113,7 @@ export default async function HomePage() {
       >
         <div
           id="hero-media"
-          className="relative grid min-h-0 flex-1 grid-rows-[2fr_3fr] md:grid-cols-[2fr_3fr] md:grid-rows-1"
+          className="relative grid min-h-0 flex-1 grid-rows-[3fr_2fr] md:grid-cols-[2fr_3fr] md:grid-rows-1"
         >
           {/* Subtle top fade behind the transparent header */}
           <div
@@ -125,7 +125,8 @@ export default async function HomePage() {
             aria-hidden
             className="hero-bottom-blur pointer-events-none absolute inset-x-0 bottom-0 z-1 h-1/4"
           />
-          <div className="relative overflow-hidden">
+          {/* Phones show the video first, then the photo; side by side from tablets up. */}
+          <div className="relative overflow-hidden max-md:order-2">
             <Image
               src="/images/hero-image-1.png"
               alt="Komb Botanical Hair Serum in a glass dropper bottle beside a jar of Renewal Hair Moisturizer"
@@ -167,7 +168,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="relative overflow-hidden">
+          <div className="relative overflow-hidden max-md:order-1">
             <HeroVideo />
             <div className="absolute right-gutter bottom-[clamp(1.5rem,4vw,3rem)] left-gutter z-2 grid justify-items-start gap-5">
             <h1

@@ -1,11 +1,8 @@
 "use client";
 
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-gsap.registerPlugin(useGSAP);
 
 export type DifferentSlide = {
   title: string;
@@ -99,20 +96,18 @@ export function DifferentCarousel({
   useEffect(() => () => clearTimeout(settle.current), []);
 
   // Crossfade the copy when the slide changes, unless motion is reduced.
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap.fromTo(
-          copy.current,
-          { autoAlpha: 0, y: 10 },
-          { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" }
-        );
-      });
-      return () => mm.revert();
-    },
-    { dependencies: [index] }
-  );
+  // Uses the browser's own animation API, so no library is needed for it.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const animation = copy.current?.animate(
+      [
+        { opacity: 0, transform: "translateY(10px)" },
+        { opacity: 1, transform: "none" },
+      ],
+      { duration: 500, easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)" }
+    );
+    return () => animation?.cancel();
+  }, [index]);
 
   return (
     <div

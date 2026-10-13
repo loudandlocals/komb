@@ -1,11 +1,7 @@
 "use client";
 
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePathname } from "next/navigation";
-
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+import { useEffect } from "react";
 
 // The one shared scroll-enter animation. Any [data-reveal] element fades up
 // as it scrolls into view, once. Children of a [data-reveal="stagger"] element
@@ -15,13 +11,25 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 // transform never traps a sticky or blended child.
 // Content already on screen at load is left alone, so nothing flashes and the
 // largest paint is never delayed. Skipped entirely for reduced-motion users.
+// The animation library is fetched only when the browser is idle, so it is
+// not part of the first load.
 export function ScrollReveal() {
   const pathname = usePathname();
 
-  useGSAP(
-    () => {
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
+  useEffect(() => {
+    if (!window.matchMedia("(prefers-reduced-motion: no-preference)").matches) return;
+    let cancelled = false;
+    let revert = () => {};
+
+    const run = async () => {
+      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
+      if (cancelled) return;
+      gsap.registerPlugin(ScrollTrigger);
+
+      const ctx = gsap.context(() => {
         const below = (el: Element) =>
           el.getBoundingClientRect().top > window.innerHeight * 0.9;
 
@@ -52,10 +60,20 @@ export function ScrollReveal() {
           );
         });
       });
-      return () => mm.revert();
-    },
-    { dependencies: [pathname], revertOnUpdate: true }
-  );
+      revert = () => ctx.revert();
+    };
+
+    const idle = window.requestIdleCallback
+      ? window.requestIdleCallback(run, { timeout: 2000 })
+      : window.setTimeout(run, 300);
+
+    return () => {
+      cancelled = true;
+      if (window.cancelIdleCallback) window.cancelIdleCallback(idle);
+      else window.clearTimeout(idle);
+      revert();
+    };
+  }, [pathname]);
 
   return null;
 }

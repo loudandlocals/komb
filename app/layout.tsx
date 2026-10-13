@@ -9,12 +9,23 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { OG_IMAGE, SITE } from "@/lib/site";
 import "./globals.css";
 
+// Only the two cuts the site uses: medium upright for the KOMB wordmark, and
+// regular italic for the sign-off line on Our Story.
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["400", "500"],
-  style: ["normal", "italic"],
+  weight: ["500"],
+  style: ["normal"],
   variable: "--font-cormorant",
   display: "swap",
+});
+const cormorantItalic = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["italic"],
+  variable: "--font-cormorant-italic",
+  display: "swap",
+  // Used on one page only, so it is not fetched ahead of time everywhere.
+  preload: false,
 });
 const caslon = Libre_Caslon_Text({
   subsets: ["latin"],
@@ -54,7 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en-CA"
-      className={`${cormorant.variable} ${caslon.variable} ${roboto.variable}`}
+      className={`${cormorant.variable} ${cormorantItalic.variable} ${caslon.variable} ${roboto.variable}`}
     >
       <body>
         <CartProvider>
