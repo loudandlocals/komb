@@ -2,18 +2,20 @@
 
 import { useState } from "react";
 import { formatMoney } from "@/lib/format";
-import type { Product } from "@/lib/types";
+import type { Product, SellingPlan } from "@/lib/types";
 import { useCart, type CartItem } from "./CartProvider";
 
-function toItem(p: Product): Omit<CartItem, "quantity"> {
+// With a plan, the line carries the plan's id and its per-delivery price.
+function toItem(p: Product, plan?: SellingPlan): Omit<CartItem, "quantity"> {
   return {
+    ...(plan && { sellingPlanId: plan.id, planName: plan.name }),
     variantId: p.variantId,
     handle: p.handle,
     title: p.title,
     kind: p.kind,
     size: p.size,
     imageUrl: p.imageUrl,
-    price: p.price,
+    price: plan?.price ?? p.price,
   };
 }
 
@@ -26,8 +28,11 @@ export function BuyNowButton({
   ariaLabel,
   quantity = 1,
   showPrice = false,
+  plan,
 }: {
   products: Product[];
+  // A subscription plan for a single product bought this way.
+  plan?: SellingPlan;
   label?: string;
   className?: string;
   ariaLabel?: string;
@@ -37,7 +42,7 @@ export function BuyNowButton({
 }) {
   const { checkout, pending } = useCart();
   const total = {
-    amount: products.reduce((n, p) => n + p.price.amount * quantity, 0),
+    amount: products.reduce((n, p) => n + (plan?.price ?? p.price).amount * quantity, 0),
     currencyCode: products[0]?.price.currencyCode ?? "CAD",
   };
   const [mine, setMine] = useState(false);
@@ -52,7 +57,7 @@ export function BuyNowButton({
       disabled={pending || soldOut}
       onClick={async () => {
         setMine(true);
-        await checkout(products.map((p) => ({ ...toItem(p), quantity })));
+        await checkout(products.map((p) => ({ ...toItem(p, plan), quantity })));
         setMine(false);
       }}
     >
@@ -76,8 +81,11 @@ export function AddToCartButton({
   quantity = 1,
   primary = false,
   showPrice = false,
+  plan,
 }: {
   product: Product;
+  // The chosen subscription plan, if any.
+  plan?: SellingPlan;
   className?: string;
   quantity?: number;
   // Dark, filled style for places where this is the main action.
@@ -91,7 +99,7 @@ export function AddToCartButton({
       type="button"
       className={`btn ${primary ? "btn-primary" : "btn-outline"} ${className}`}
       disabled={!product.availableForSale}
-      onClick={() => add(toItem(product), quantity)}
+      onClick={() => add(toItem(product, plan), quantity)}
     >
       Add to cart
       {showPrice && (
@@ -100,7 +108,10 @@ export function AddToCartButton({
             —
           </span>
           <span className="sr-only">, </span>
-          {formatMoney({ ...product.price, amount: product.price.amount * quantity })}
+          {formatMoney({
+            ...product.price,
+            amount: (plan?.price ?? product.price).amount * quantity,
+          })}
         </>
       )}
     </button>

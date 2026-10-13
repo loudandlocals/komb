@@ -1,3 +1,4 @@
+import { toSellingPlans, type ShopifySellingPlanGroups } from "./sellingPlans";
 import type { Product, ProductContent } from "./types";
 
 export const WARNINGS =
@@ -139,6 +140,34 @@ export const LOCAL_IMAGES: Record<
 
 // MOCK DATA. Used until Shopify credentials are set in .env.local.
 // The prices below are placeholders, not Komb's real ones.
+// PLACEHOLDER SUBSCRIPTION PLANS. Not Komb's real offer: the frequencies and
+// the 10% saving are stand-ins until the client's subscription app is set up.
+// Shaped exactly like `product.sellingPlanGroups` from the Storefront API, so
+// the same code reads the real plans once the store is connected.
+const MOCK_SELLING_PLAN_GROUPS: ShopifySellingPlanGroups = {
+  nodes: [
+    {
+      name: "Subscribe and save (placeholder)",
+      sellingPlans: {
+        nodes: [4, 6, 8].map((weeks) => ({
+          id: `gid://shopify/SellingPlan/placeholder-${weeks}-weeks`,
+          name: `Deliver every ${weeks} weeks`,
+          recurringDeliveries: true,
+          options: [{ name: "Deliver every", value: `${weeks} weeks` }],
+          priceAdjustments: [
+            {
+              adjustmentValue: {
+                __typename: "SellingPlanPercentagePriceAdjustment" as const,
+                adjustmentPercentage: 10,
+              },
+            },
+          ],
+        })),
+      },
+    },
+  ],
+};
+
 const mock = (
   handle: string,
   title: string,
@@ -148,6 +177,7 @@ const mock = (
   title,
   variantId: `mock-variant-${handle}`,
   price: { amount, currencyCode: "CAD" },
+  sellingPlans: toSellingPlans(MOCK_SELLING_PLAN_GROUPS, { amount, currencyCode: "CAD" }),
   availableForSale: true,
   imageUrl: LOCAL_IMAGES[handle]?.url,
   pdpImageUrl: LOCAL_IMAGES[handle]?.pdpUrl,

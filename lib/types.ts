@@ -15,7 +15,21 @@ export type Product = {
   // Tighter crop for the product page; falls back to imageUrl.
   pdpImageUrl?: string;
   imageAlt?: string;
+  // Subscription options from Shopify. Empty or missing means one-time only.
+  sellingPlans?: SellingPlan[];
+  // True when the product can only be bought on a plan.
+  requiresSellingPlan?: boolean;
 } & ProductContent;
+
+export type SellingPlan = {
+  id: string;
+  name: string;
+  // How often it is delivered, as the store words it: "Every 4 weeks".
+  frequency: string;
+  // Price of one delivery on this plan.
+  price: Money;
+  percentOff: number;
+};
 
 export type ProductContent = {
   kind: ProductKind;
@@ -52,4 +66,4 @@ export type ProductContent = {
   step?: string;
 };
 
-export type CheckoutLine = { variantId: string; quantity: number };
+export type CheckoutLine = { variantId: string; quantity: number; sellingPlanId?: string };

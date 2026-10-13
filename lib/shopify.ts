@@ -1,5 +1,10 @@
 import "server-only";
 import { CONTENT, LOCAL_IMAGES, MOCK_PRODUCTS } from "./catalog";
+import {
+  SELLING_PLAN_FIELDS,
+  toSellingPlans,
+  type ShopifySellingPlanGroups,
+} from "./sellingPlans";
 import type { CheckoutLine, Product, ProductContent } from "./types";
 
 const domain = process.env.SHOPIFY_STORE_DOMAIN;
@@ -37,6 +42,7 @@ const PRODUCT_FIELDS = /* GraphQL */ `
     description
     availableForSale
     featuredImage { url altText }
+    ${SELLING_PLAN_FIELDS}
     variants(first: 1) {
       nodes { id availableForSale price { amount currencyCode } }
     }
@@ -49,6 +55,8 @@ type ShopifyProduct = {
   description: string;
   availableForSale: boolean;
   featuredImage: { url: string; altText: string | null } | null;
+  requiresSellingPlan: boolean;
+  sellingPlanGroups: ShopifySellingPlanGroups;
   variants: {
     nodes: {
       id: string;
@@ -70,14 +78,17 @@ function fallbackContent(p: ShopifyProduct): ProductContent {
 function toProduct(p: ShopifyProduct): Product | null {
   const variant = p.variants.nodes[0];
   if (!variant) return null;
+  const price = {
+    amount: Number(variant.price.amount),
+    currencyCode: variant.price.currencyCode,
+  };
   return {
     handle: p.handle,
     title: p.title,
     variantId: variant.id,
-    price: {
-      amount: Number(variant.price.amount),
-      currencyCode: variant.price.currencyCode,
-    },
+    price,
+    sellingPlans: toSellingPlans(p.sellingPlanGroups, price),
+    requiresSellingPlan: p.requiresSellingPlan,
     availableForSale: p.availableForSale && variant.availableForSale,
     imageUrl: p.featuredImage?.url ?? LOCAL_IMAGES[p.handle]?.url,
     pdpImageUrl: p.featuredImage ? undefined : LOCAL_IMAGES[p.handle]?.pdpUrl,
@@ -127,6 +138,7 @@ export async function createCheckoutUrl(lines: CheckoutLine[]): Promise<string> 
       lines: lines.map((l) => ({
         merchandiseId: l.variantId,
         quantity: l.quantity,
+        ...(l.sellingPlanId && { sellingPlanId: l.sellingPlanId }),
       })),
     },
     false

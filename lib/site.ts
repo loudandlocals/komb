@@ -7,6 +7,10 @@ export const OG_IMAGE = {
   alt: "A woman with long, softly waved hair",
 };
 
+// Shopify's hosted customer accounts (sign-in, orders, subscriptions). Until
+// the store is connected this falls back to the placeholder page at /account.
+export const ACCOUNT_URL = process.env.NEXT_PUBLIC_SHOPIFY_ACCOUNT_URL || "/account";
+
 export const SITE = {
   name: "Komb Hair",
   url: "https://www.komb.ca",

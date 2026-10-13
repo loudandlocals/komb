@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { ACCOUNT_URL } from "@/lib/site";
 import { useCart } from "./CartProvider";
 
 const NAV = [
@@ -95,9 +96,21 @@ export function Header() {
         >
           KOMB <span>HAIR</span>
         </Link>
+        <div className="flex items-center gap-1 justify-self-end sm:gap-3">
+        {/* A plain anchor: once set, the account lives on Shopify, off this site. */}
+        <a
+          href={ACCOUNT_URL}
+          aria-label="Account"
+          className="grid size-11 place-items-center"
+        >
+          <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden>
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 20.5c1.2-3.8 4.3-5.5 8-5.5s6.8 1.7 8 5.5" />
+          </svg>
+        </a>
         <button
           type="button"
-          className={`${navText} justify-self-end py-2`}
+          className={`${navText} py-2`}
           aria-haspopup="dialog"
           onClick={open}
         >
@@ -112,6 +125,7 @@ export function Header() {
           {/* The spoken name starts with the visible "Cart 0", as speech-input users expect. */}
           <span className="sr-only">{count === 1 ? " item" : " items"}</span>
         </button>
+        </div>
       </div>
     </header>
   );

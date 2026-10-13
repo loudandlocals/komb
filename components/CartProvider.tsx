@@ -20,7 +20,14 @@ export type CartItem = {
   imageUrl?: string;
   price: Money;
   quantity: number;
+  // Set when the line is a subscription; `price` is then the plan's price.
+  sellingPlanId?: string;
+  planName?: string;
 };
+
+// The same product one-time and on a plan are separate cart lines.
+export const lineKey = (item: Pick<CartItem, "variantId" | "sellingPlanId">) =>
+  `${item.variantId}::${item.sellingPlanId ?? ""}`;
 
 type CartContextValue = {
   items: CartItem[];
@@ -32,7 +39,7 @@ type CartContextValue = {
   open: () => void;
   close: () => void;
   add: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
-  setQuantity: (variantId: string, quantity: number) => void;
+  setQuantity: (key: string, quantity: number) => void;
   checkout: (lines?: CartItem[]) => Promise<void>;
 };
 
@@ -66,10 +73,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const add = useCallback<CartContextValue["add"]>((item, quantity = 1) => {
     setItems((current) => {
-      const existing = current.find((i) => i.variantId === item.variantId);
+      const key = lineKey(item);
+      const existing = current.find((i) => lineKey(i) === key);
       if (existing) {
         return current.map((i) =>
-          i.variantId === item.variantId
+          lineKey(i) === key
             ? { ...i, quantity: i.quantity + quantity }
             : i
         );
@@ -80,11 +88,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setIsOpen(true);
   }, []);
 
-  const setQuantity = useCallback((variantId: string, quantity: number) => {
+  const setQuantity = useCallback((key: string, quantity: number) => {
     setItems((current) =>
       quantity <= 0
-        ? current.filter((i) => i.variantId !== variantId)
-        : current.map((i) => (i.variantId === variantId ? { ...i, quantity } : i))
+        ? current.filter((i) => lineKey(i) !== key)
+        : current.map((i) => (lineKey(i) === key ? { ...i, quantity } : i))
     );
   }, []);
 
@@ -102,7 +110,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            lines: selected.map((i) => ({ variantId: i.variantId, quantity: i.quantity })),
+            lines: selected.map((i) => ({
+              variantId: i.variantId,
+              quantity: i.quantity,
+              sellingPlanId: i.sellingPlanId,
+            })),
           }),
         });
         const data = await res.json();

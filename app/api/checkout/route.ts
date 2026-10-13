@@ -6,9 +6,16 @@ export async function POST(request: Request) {
   const body = (await request.json().catch(() => null)) as {
     lines?: CheckoutLine[];
   } | null;
-  const lines = (body?.lines ?? []).filter(
-    (l) => typeof l.variantId === "string" && l.quantity > 0
-  );
+  const lines = (body?.lines ?? [])
+    .filter((l) => typeof l.variantId === "string" && l.quantity > 0)
+    .map((l) => ({
+      variantId: l.variantId,
+      quantity: l.quantity,
+      // Present when the line is a subscription.
+      ...(typeof l.sellingPlanId === "string" && l.sellingPlanId
+        ? { sellingPlanId: l.sellingPlanId }
+        : {}),
+    }));
   if (lines.length === 0) {
     return NextResponse.json({ error: "No items to check out." }, { status: 400 });
   }

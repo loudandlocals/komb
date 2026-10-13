@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { formatMoney } from "@/lib/format";
-import { CHECKOUT_PREVIEW_KEY, type CartItem } from "./CartProvider";
+import { CHECKOUT_PREVIEW_KEY, lineKey, type CartItem } from "./CartProvider";
 
 // Stand-in for Shopify checkout while the store is not connected. It only
 // shows what would be sent to checkout; nothing can be paid for here.
@@ -39,11 +39,12 @@ export function CheckoutPreview() {
         <>
           <ul className="border-t border-line">
             {items.map((item) => (
-              <li key={item.variantId} className="flex items-baseline justify-between gap-6 border-b border-line py-4">
+              <li key={lineKey(item)} className="flex items-baseline justify-between gap-6 border-b border-line py-4">
                 <span>
                   <span className="font-caslon text-[1.1rem]">{item.title}</span>
                   <span className="block text-[0.85rem] text-muted">
                     {item.size ? `${item.size} · ` : ""}Quantity {item.quantity}
+                    {item.planName ? ` · Subscription: ${item.planName.toLowerCase()}` : ""}
                   </span>
                 </span>
                 <span>{formatMoney({ ...item.price, amount: item.price.amount * item.quantity })}</span>

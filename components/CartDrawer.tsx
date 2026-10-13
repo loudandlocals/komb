@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { formatMoney } from "@/lib/format";
-import { useCart } from "./CartProvider";
+import { useCart, lineKey } from "./CartProvider";
 import { ProductArt } from "./ProductArt";
 
 // A native modal <dialog>: the browser traps focus, closes on Escape and
@@ -47,7 +47,7 @@ export function CartDrawer() {
           <ul className="flex-1 overflow-y-auto">
             {items.map((item) => (
               <li
-                key={item.variantId}
+                key={lineKey(item)}
                 className="grid grid-cols-[4.5rem_1fr_auto] gap-4 border-b border-line py-5"
               >
                 <div className="grid aspect-4/5 place-items-center bg-greige">
@@ -56,12 +56,13 @@ export function CartDrawer() {
                 <div>
                   <p className="font-caslon">{item.title}</p>
                   {item.size && <p className="text-[0.82rem] text-muted">{item.size}</p>}
+                  {item.planName && <p className="text-[0.82rem] text-muted">{item.planName}</p>}
                   <div className="mt-2.5 inline-flex items-center gap-1 border border-ink/50">
                     <button
                       type="button"
                       className="size-9"
                       aria-label={`Decrease quantity of ${item.title}`}
-                      onClick={() => setQuantity(item.variantId, item.quantity - 1)}
+                      onClick={() => setQuantity(lineKey(item), item.quantity - 1)}
                     >
                       −
                     </button>
@@ -72,7 +73,7 @@ export function CartDrawer() {
                       type="button"
                       className="size-9"
                       aria-label={`Increase quantity of ${item.title}`}
-                      onClick={() => setQuantity(item.variantId, item.quantity + 1)}
+                      onClick={() => setQuantity(lineKey(item), item.quantity + 1)}
                     >
                       +
                     </button>
