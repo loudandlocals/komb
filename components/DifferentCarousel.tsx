@@ -44,9 +44,17 @@ export function DifferentCarousel({
     return el && card ? card.offsetLeft - el.offsetLeft : 0;
   };
 
+  // Set while the row scrolls itself, so that scroll is not mistaken for a
+  // swipe that picks a different slide.
+  const autoScrolling = useRef(false);
+  const autoScrollTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
   const show = (next: number) => {
     const i = (next + slides.length) % slides.length;
     setIndex(i);
+    autoScrolling.current = true;
+    clearTimeout(autoScrollTimer.current);
+    autoScrollTimer.current = setTimeout(() => (autoScrolling.current = false), 900);
     rail.current?.scrollTo({ left: offsetOf(i) });
   };
 
@@ -61,8 +69,10 @@ export function DifferentCarousel({
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) setPlaying(true);
     const el = root.current;
     if (!el) return;
+    // "On screen" means crossing the middle of the viewport, which works however
+    // tall the carousel is (it is taller than the screen on some phones).
     const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), {
-      threshold: 0.4,
+      rootMargin: "-30% 0px -30% 0px",
     });
     observer.observe(el);
     return () => observer.disconnect();
@@ -79,6 +89,7 @@ export function DifferentCarousel({
 
   // Swiping or scrolling the row picks the photo that ends up in front.
   const onScroll = () => {
+    if (autoScrolling.current) return;
     clearTimeout(settle.current);
     settle.current = setTimeout(() => {
       const el = rail.current;
@@ -93,7 +104,13 @@ export function DifferentCarousel({
     }, 120);
   };
 
-  useEffect(() => () => clearTimeout(settle.current), []);
+  useEffect(
+    () => () => {
+      clearTimeout(settle.current);
+      clearTimeout(autoScrollTimer.current);
+    },
+    []
+  );
 
   // Crossfade the copy when the slide changes, unless motion is reduced.
   // Uses the browser's own animation API, so no library is needed for it.
@@ -114,7 +131,11 @@ export function DifferentCarousel({
       ref={root}
       onPointerEnter={() => setHeld(true)}
       onPointerLeave={() => setHeld(false)}
-      onFocus={() => setHeld(true)}
+      // Hold for keyboard focus only: a mouse click leaves focus on the button
+      // it pressed, which would otherwise pause autoplay indefinitely.
+      onFocus={(e) => {
+        if ((e.target as HTMLElement).matches(":focus-visible")) setHeld(true);
+      }}
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) setHeld(false);
       }}
