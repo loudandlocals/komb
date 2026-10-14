@@ -7,6 +7,7 @@ const NAV = [
   { href: "/#routine", label: "The Routine" },
   { href: "/our-story", label: "Our Story" },
   { href: "/reviews", label: "Reviews" },
+  { href: "/contact", label: "Contact" },
 ];
 
 const PRODUCTS = [
@@ -143,6 +144,9 @@ export function Footer() {
             </Link>
             <Link href="/shipping-returns" className={smallLink}>
               Shipping &amp; Returns
+            </Link>
+            <Link href="/privacy" className={smallLink}>
+              Privacy Policy
             </Link>
           </div>
           <p className="md:text-right">

@@ -12,9 +12,10 @@ const NAV = [
   { href: "/#routine", label: "The Routine" },
   { href: "/our-story", label: "Our Story" },
   { href: "/reviews", label: "Reviews" },
+  { href: "/contact", label: "Contact" },
 ];
 
-const navText = "text-[0.74rem] whitespace-nowrap uppercase tracking-[0.16em]";
+const navText = "text-[0.74rem] whitespace-nowrap uppercase tracking-[0.16em] lg:max-xl:tracking-[0.1em]";
 
 // On the home page the header is fully transparent while it sits over the
 // hero imagery (light text with a soft shadow, backed by a subtle fade inside
@@ -76,7 +77,7 @@ export function Header() {
         <nav
           id="site-nav"
           aria-label="Main"
-          className={`${menuOpen ? "flex" : "hidden"} absolute inset-x-0 top-full flex-col border-b border-line bg-offwhite px-gutter pb-5 lg:static lg:flex lg:flex-row lg:gap-[clamp(1rem,2.2vw,2rem)] lg:border-0 lg:bg-transparent lg:p-0`}
+          className={`${menuOpen ? "flex" : "hidden"} absolute inset-x-0 top-full flex-col border-b border-line bg-offwhite px-gutter pb-5 lg:static lg:flex lg:flex-row lg:gap-[clamp(0.85rem,1.6vw,2rem)] lg:border-0 lg:bg-transparent lg:p-0`}
         >
           {NAV.map((item) => (
             <Link

@@ -13,7 +13,7 @@ export const ACCOUNT_URL = process.env.NEXT_PUBLIC_SHOPIFY_ACCOUNT_URL || "/acco
 
 // The privacy policy does not exist yet. Set its path here (for example
 // "/privacy") and the email sign-up's consent line links to it.
-export const PRIVACY_URL = "";
+export const PRIVACY_URL = "/privacy";
 
 export const SITE = {
   name: "Komb Hair",
