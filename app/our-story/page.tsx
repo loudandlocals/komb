@@ -31,7 +31,7 @@ export default function OurStoryPage() {
             className="object-cover object-[50%_70%]"
           />
         </div>
-        <div className="grid max-w-xl justify-items-start gap-5" data-reveal="stagger">
+        <div className="grid max-w-xl justify-items-start gap-5 md:pt-[clamp(2rem,6vw,5rem)]" data-reveal="stagger">
           <p>
             Maybe it&rsquo;s a wider part, a thinner ponytail, or more hair in the
             shower than you remember. Maybe your hair feels drier, less manageable,

@@ -91,6 +91,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             "@type": "Organization",
             name: "Komb Hair Inc.",
             url: SITE.url,
+            logo: `${SITE.url}/logo.png`,
             sameAs: [SITE.instagram],
             address: {
               "@type": "PostalAddress",

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ACCOUNT_URL } from "@/lib/site";
 import { useCart } from "./CartProvider";
+import { Logo } from "./Logo";
 
 const NAV = [
   { href: "/shop", label: "Shop" },
@@ -91,11 +92,11 @@ export function Header() {
         <Link
           href="/"
           aria-label="Komb Hair home"
-          className={`wordmark text-[1.4rem] transition-colors duration-300 sm:text-[1.7rem] ${
-            clear ? "text-offwhite!" : ""
+          className={`block transition-colors duration-300 ${
+            clear ? "text-offwhite [filter:drop-shadow(0_1px_8px_rgb(39_37_34/0.6))]" : "text-gold"
           }`}
         >
-          KOMB <span>HAIR</span>
+          <Logo className="h-10 w-auto sm:h-11" />
         </Link>
         <div className="flex items-center gap-1 justify-self-end sm:gap-3">
         {/* A plain anchor: once set, the account lives on Shopify, off this site. */}
