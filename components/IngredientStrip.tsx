@@ -48,7 +48,9 @@ export function IngredientStrip({
   // Where the last cell sends people for the complete ingredient lists.
   links: { href: string; label: string }[];
   // Columns on laptops and up. Two keeps the grid to two columns throughout.
-  columns?: 2 | 3;
+  // Five puts up to five ingredients in one row on laptops (two per row on
+  // tablets), centres any shorter row, and moves the link under the grid.
+  columns?: 2 | 3 | 5;
   // An optional text-only cell after the ingredients.
   note?: { title: string; tagline: [string, string]; body: string };
 }) {
@@ -67,7 +69,12 @@ export function IngredientStrip({
   // In a two-column grid the link gets a cell only when that completes the
   // last row; otherwise it sits under the grid.
   const cells = items.length + (note ? 1 : 0);
-  const linkInGrid = columns === 3 || cells % 2 === 1;
+  const five = columns === 5;
+  const linkInGrid = columns === 3 || (columns === 2 && cells % 2 === 1);
+  // Cell widths for the five-column layout, which wraps and centres rows.
+  const fiveCell = five
+    ? "md:w-[calc(50%-var(--gx)/2)] lg:w-[calc(20%-var(--gx)*4/5)]"
+    : "";
   const linkButtons = (
         <div className="flex flex-wrap justify-center gap-3">
           {links.map((link) =>
@@ -104,10 +111,12 @@ export function IngredientStrip({
   return (
     <>
     <ul
-      className={`container-site grid gap-y-12 md:grid-cols-2 md:gap-y-20 ${
-        columns === 2
-          ? "max-w-[58rem]! gap-x-[clamp(2rem,8vw,8rem)]"
-          : "gap-x-[clamp(2rem,6vw,6rem)] lg:grid-cols-3"
+      className={`container-site gap-y-12 md:gap-y-20 ${
+        five
+          ? "grid [--gx:clamp(1rem,2.5vw,2.5rem)] md:flex md:flex-wrap md:justify-center md:gap-x-(--gx)"
+          : columns === 2
+            ? "grid max-w-[58rem]! gap-x-[clamp(2rem,8vw,8rem)] md:grid-cols-2"
+            : "grid gap-x-[clamp(2rem,6vw,6rem)] md:grid-cols-2 lg:grid-cols-3"
       }`}
     >
       {items.map((item, i) => {
@@ -133,14 +142,20 @@ export function IngredientStrip({
               if (!e.currentTarget.contains(e.relatedTarget)) setOpen((o) => (o === i ? null : o));
             }}
             onKeyDown={(e) => e.key === "Escape" && setOpen(null)}
-            className={`relative flex items-center gap-6 max-md:cursor-pointer md:gap-10 ${
+            className={`relative flex items-center gap-6 max-md:cursor-pointer ${five ? `md:gap-6 ${fiveCell}` : "md:gap-10"} ${
               textFirst ? "flex-row md:flex-col" : "flex-row-reverse md:flex-col-reverse"
             }`}
           >
             {/* Only the text animates in. A transform or fade on the photo
                 would stop it blending into the page while it runs. */}
             <div className="w-1/2 text-center md:w-auto" data-reveal>
-              <h3 className="font-sans text-[clamp(1.1rem,1.7vw,1.45rem)] leading-[1.05] font-bold tracking-[-0.02em] uppercase md:whitespace-nowrap">
+              <h3
+                className={`font-sans leading-[1.05] font-bold tracking-[-0.02em] uppercase ${
+                  five
+                    ? "text-[clamp(1rem,1.25vw,1.2rem)]"
+                    : "text-[clamp(1.1rem,1.7vw,1.45rem)] md:whitespace-nowrap"
+                }`}
+              >
                 <button
                   type="button"
                   aria-expanded={isOpen || sheet === i}
@@ -190,7 +205,7 @@ export function IngredientStrip({
               id={cardId}
               role="region"
               aria-label={`About ${item.name}`}
-              className={`absolute inset-x-0 z-10 border border-gold-light bg-offwhite p-5 text-left shadow-[0_12px_40px_rgb(39_37_34/0.14)] transition-[opacity,visibility] duration-300 max-md:hidden ${
+              className={`absolute z-10 border ${five ? "inset-x-0 lg:-inset-x-6" : "inset-x-0"} border-gold-light bg-offwhite p-5 text-left shadow-[0_12px_40px_rgb(39_37_34/0.14)] transition-[opacity,visibility] duration-300 max-md:hidden ${
                 textFirst ? "md:top-auto md:bottom-0" : "md:top-0"
               } ${isOpen ? "visible opacity-100" : "invisible opacity-0"}`}
             >
@@ -204,7 +219,7 @@ export function IngredientStrip({
         );
       })}
       {note && (
-        <li className="flex flex-col items-center justify-center gap-3 py-6 text-center" data-reveal>
+        <li className={`flex flex-col items-center justify-center gap-3 py-6 text-center ${fiveCell}`} data-reveal>
           <h3 className={cellTitle}>{note.title}</h3>
           <p className={cellTagline}>
             {note.tagline[0]}
