@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ProductCard } from "@/components/ProductCard";
+import { visitorCountry } from "@/lib/market";
 import { getProducts } from "@/lib/shopify";
 import { OG_IMAGE } from "@/lib/site";
 
@@ -15,7 +16,7 @@ const grid = "grid max-w-4xl gap-[clamp(1.5rem,4vw,4rem)] sm:grid-cols-2";
 const heading = "mb-8 border-b border-gold-light pb-4 text-[1.75rem]!";
 
 export default async function ShopPage() {
-  const products = await getProducts();
+  const products = await getProducts(await visitorCountry());
 
   return (
     <div className="container-site pt-[clamp(3rem,6vw,5rem)] pb-section">

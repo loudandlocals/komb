@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 import { formatMoney } from "@/lib/format";
 import type { Product } from "@/lib/types";
-import { AddToCartButton } from "./BuyButtons";
+import { AddBundleButton, AddToCartButton } from "./BuyButtons";
 
 const option =
   "flex cursor-pointer items-center gap-3 border px-3.5 py-3 text-[0.9rem] font-normal transition-colors has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ink";
@@ -20,7 +20,15 @@ const chevron =
 // one-time or subscribe choice sits on top, with a delivery frequency menu
 // while subscribing; a product with no plans shows none of it. Below: the
 // quantity stepper, then Add to cart, whose price follows the choice.
-export function PurchasePanel({ product }: { product: Product }) {
+export function PurchasePanel({
+  product,
+  routine = [],
+}: {
+  product: Product;
+  // Both routine products, when this product is one of them: offers the pair
+  // as a quieter second button under Add to cart.
+  routine?: Product[];
+}) {
   const [quantity, setQuantity] = useState(1);
   const plans = product.sellingPlans ?? [];
   const subscriptionOnly = Boolean(product.requiresSellingPlan) && plans.length > 0;
@@ -129,6 +137,14 @@ export function PurchasePanel({ product }: { product: Product }) {
           {product.size}
           {plan && <> · {plan.name}</>}
         </p>
+      )}
+      {routine.length > 1 && (
+        <AddBundleButton
+          products={routine}
+          label="Add both steps"
+          ariaLabel={`Add both steps to cart: ${routine.map((p) => p.title).join(" and ")}`}
+          className="min-h-11 w-full px-2.5 text-[0.68rem] tracking-[0.12em]"
+        />
       )}
     </div>
   );

@@ -15,6 +15,7 @@ import { ROUTINE_HANDLES, WARNINGS } from "@/lib/catalog";
 import { PRODUCT_FAQ } from "@/lib/faq";
 import { ingredientsFor } from "@/lib/ingredients";
 import { formatMoney } from "@/lib/format";
+import { visitorCountry } from "@/lib/market";
 import { getProduct, getProducts } from "@/lib/shopify";
 import { SITE } from "@/lib/site";
 
@@ -41,32 +42,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function expectations(kind: string) {
-  if (kind === "serum") {
-    return "A nourished-feeling scalp and a calming ritual you can keep up. Komb is scalp care, not a hair loss treatment, and we do not promise regrowth.";
-  }
-  if (kind === "moisturizer") {
-    return "Lengths that feel hydrated, softer and easier to manage. Results vary with hair type and how much you apply.";
-  }
-  return "A well-made everyday essential that fits alongside your routine.";
-}
-
 export default async function ProductPage({ params }: Props) {
   const { handle } = await params;
-  const product = await getProduct(handle);
+  const country = await visitorCountry();
+  const product = await getProduct(handle, country);
   if (!product) notFound();
 
   const pairHandle = ROUTINE_HANDLES.includes(handle)
     ? ROUTINE_HANDLES.find((h) => h !== handle)
     : undefined;
-  const pair = pairHandle ? await getProduct(pairHandle) : null;
+  const pair = pairHandle ? await getProduct(pairHandle, country) : null;
+  // Both steps in routine order, for the bundle button.
+  const routine = pair
+    ? ROUTINE_HANDLES.map((h) => (h === product.handle ? product : pair))
+    : [];
   const url = `${SITE.url}/products/${product.handle}`;
 
   const faq = PRODUCT_FAQ[product.handle];
   const featured = ingredientsFor(product.handle);
 
   // Previous and next product, wrapping around the catalogue.
-  const all = await getProducts();
+  const all = await getProducts(country);
   const at = all.findIndex((p) => p.handle === product.handle);
   const prev = all.length > 1 ? all[(at - 1 + all.length) % all.length] : null;
   const next = all.length > 1 ? all[(at + 1) % all.length] : null;
@@ -131,7 +127,7 @@ export default async function ProductPage({ params }: Props) {
 
           {/* Purchase and details */}
           <div className="relative z-1 order-3 grid w-full max-w-md gap-5 max-lg:mx-auto lg:order-none lg:max-w-none lg:justify-self-end xl:max-w-88">
-            <PurchasePanel product={product} />
+            <PurchasePanel product={product} routine={routine} />
             {product.notes && (
               <ul className="text-[0.82rem] text-muted">
                 {product.notes.map((n) => (
@@ -144,6 +140,7 @@ export default async function ProductPage({ params }: Props) {
                 <details>
                   <summary>How to use</summary>
                   <p>{product.directions}</p>
+                  {product.usageNote && <p className="-mt-2">{product.usageNote}</p>}
                 </details>
               )}
               {product.ingredients && (
@@ -152,10 +149,18 @@ export default async function ProductPage({ params }: Props) {
                   <p>{product.ingredients}</p>
                 </details>
               )}
-              <details>
-                <summary>What to expect</summary>
-                <p>{expectations(product.kind)}</p>
-              </details>
+              {product.benefitsDetailed && (
+                <details>
+                  <summary>Benefits</summary>
+                  <ul className="grid gap-2.5 pb-5 text-[0.88rem] text-muted">
+                    {product.benefitsDetailed.map((b) => (
+                      <li key={b.title}>
+                        <strong className="font-medium text-ink">{b.title}</strong>: {b.body}
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              )}
               {product.category !== "other" && (
                 <details>
                   <summary>Good to know</summary>
@@ -257,7 +262,7 @@ export default async function ProductPage({ params }: Props) {
             </h2>
             <p className="max-w-xl text-muted">
               {product.kind === "serum"
-                ? "Nine botanical oils go into the serum. Here are four you will find on the label."
+                ? "Ten botanical oils go into the serum, now with pumpkin seed oil. Here are five you will find on the label."
                 : "Mango and shea butters with plant oils, in a formula that also contains conditioning silicones and fragrance. Here are a few you will find on the label."}
             </p>
           </header>

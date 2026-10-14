@@ -5,12 +5,24 @@ import type { StripIngredient } from "@/components/IngredientStrip";
 // Taglines describe the ingredient's character or cosmetic feel only.
 export const INGREDIENTS: (StripIngredient & { handles: string[] })[] = [
   {
+    // New to the serum and a focal ingredient. No photo yet: the grid shows a
+    // marked placeholder until public/images/ingredients/clean/pumpkin.jpg
+    // exists and `image` below is set to it.
+    name: "Pumpkin seed oil",
+    handles: ["botanical-hair-serum"],
+    tagline: ["new to", "the serum"],
+    where: "In the serum",
+    description:
+      "A nourishing seed oil, newly added to the serum. It joins rosemary and juniper berry at the heart of the blend, made to moisturize a dry scalp and condition dry strands.",
+    alt: "Pumpkin seeds resting in a pool of oil",
+  },
+  {
     name: "Rosemary oil",
     handles: ["botanical-hair-serum"],
     tagline: ["a long history", "in scalp care"],
     where: "In the serum",
     description:
-      "An aromatic oil with a long history in scalp care rituals. Published research has looked at rosemary oil on its own. That is not a study of our serum, and we make no growth claims for the finished formula.",
+"Rosemary is known for its role in hair and scalp care, with research suggesting it may help support hair growth and improve the appearance of fullness over time. That research is on rosemary oil itself, not a study of the Komb serum.",
     image: "/images/ingredients/clean/rosemary.jpg",
     alt: "A sprig of rosemary resting in a pool of oil",
   },

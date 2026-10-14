@@ -57,6 +57,10 @@ export type ProductContent = {
   summary: string;
   benefits: string[];
   directions?: string;
+  // Extra usage guidance shown under "How to use" on the product page only.
+  usageNote?: string;
+  // The "Benefits" row on the product page, in the client's wording.
+  benefitsDetailed?: { title: string; body: string }[];
   ingredients?: string;
   keyIngredients?: string[];
   // Factual either/or descriptors shown as marker lines in "The goal".

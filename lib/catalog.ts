@@ -16,7 +16,7 @@ export const CONTENT: Record<string, ProductContent> = {
     gtin12: "627146332224",
     tagline: "Nourish, Restore, Flourish",
     taglineFr: "Nourrir, Réparer, Rayonner",
-    oneLine: "Nine botanical oils for the scalp.",
+    oneLine: "Ten botanical oils for the scalp.",
     goal: {
       statement: ["To give your scalp", "the care it has been missing."],
       problem: [
@@ -25,7 +25,7 @@ export const CONTENT: Record<string, ProductContent> = {
         "Too many products, and not enough clear instructions.",
       ],
       does: [
-        "Nourishes the scalp and hair with nine botanical oils.",
+        "Nourishes the scalp and hair with ten botanical oils.",
         "Turns scalp care into a few quiet minutes of massage.",
         "Stays on for thirty minutes or overnight, then washes out.",
       ],
@@ -40,7 +40,16 @@ export const CONTENT: Record<string, ProductContent> = {
       ],
     },
     summary:
-      "A lightweight blend of nine botanical oils, made to be massaged into the scalp and left to do its quiet work.",
+      "A lightweight blend of botanical oils infused with Pumpkin Seed, Rosemary and Juniper Berry Oils. Designed to moisturize a dry scalp and condition dry strands, this nourishing formula helps soften hair, smooth frizz, and enhance shine for a healthier-looking finish.",
+    usageNote:
+      "For best results, use 3\u20134 times per week. Shampoo and rinse thoroughly to remove the serum before applying the Renewal Hair Moisturizer.",
+    benefitsDetailed: [
+      { title: "Scalp Moisture & Comfort", body: "Helps replenish moisture and soften dry, flaky skin on the scalp." },
+      { title: "Softens & Conditions", body: "Leaves dry, rough strands feeling softer, smoother, and more manageable." },
+      { title: "Smooths Frizz & Flyaways", body: "Helps create a polished finish and reduce the appearance of split ends." },
+      { title: "Helps Reduce Breakage", body: "Conditions strands to help reduce breakage during brushing and styling." },
+      { title: "Enhances Shine & Vitality", body: "Adds lustre to dull hair, restoring a nourished, healthy-looking appearance." },
+    ],
     benefits: [
       "Nourishes the scalp and hair",
       "A scalp massage ritual that takes a few minutes",
@@ -49,8 +58,8 @@ export const CONTENT: Record<string, ProductContent> = {
     directions:
       "Apply a few drops directly to the scalp, focusing on targeted areas. Gently massage into the scalp. Leave on for at least 30 minutes before washing, or leave on overnight for a more intensive treatment.",
     ingredients:
-      "Persea Americana (Avocado) Oil, Simmondsia Chinensis (Jojoba) Oil, Oryza Sativa (Rice Bran) Oil, Helianthus Annuus (Sunflower) Seed Oil, Olea Europaea (Olive) Oil, Vitis Vinifera (Grape) Seed Oil, Carthamus Tinctorius (Safflower) Oil, Rosmarinus Officinalis (Rosemary) Oil, Juniperus Communis (Juniper Berry) Oil, Limonene, Linalool.",
-    keyIngredients: ["Avocado oil", "Jojoba oil", "Rosemary oil", "Juniper berry oil"],
+      "Persea Americana (Avocado) Oil, Simmondsia Chinensis (Jojoba) Oil, Oryza Sativa (Rice Bran) Oil, Helianthus Annuus (Sunflower) Seed Oil, Olea Europaea (Olive) Oil, Vitis Vinifera (Grape) Seed Oil, Carthamus Tinctorius (Safflower) Oil, Cucurbita Pepo (Pumpkin) Seed Oil, Rosmarinus Officinalis (Rosemary) Oil, Juniperus Communis (Juniper Berry) Oil, Limonene, Linalool.",
+    keyIngredients: ["Pumpkin seed oil", "Rosemary oil", "Juniper berry oil", "Avocado oil", "Jojoba oil"],
     traits: [
       { label: "Where", from: "Scalp", to: "Lengths", at: 0 },
       { label: "Texture", from: "Oil", to: "Cream", at: 0 },
@@ -92,6 +101,16 @@ export const CONTENT: Record<string, ProductContent> = {
     },
     summary:
       "A rich leave-in moisturizer with mango and shea butters that hydrates the lengths, so hair feels softer, smoother and easier to manage.",
+    usageNote:
+      "Using the Botanical Hair Serum too? Wash it out first: shampoo and rinse thoroughly, then apply this leave-in moisturizer.",
+    benefitsDetailed: [
+      { title: "Nourishes & Moisturizes", body: "Helps replenish moisture in dry hair for a soft, supple feel." },
+      { title: "Softens & Smooths", body: "Conditions rough strands and improves manageability." },
+      { title: "Tames Frizz & Flyaways", body: "Helps smooth hair for a polished-looking finish." },
+      { title: "Enhances Shine", body: "Adds lustre to dull strands for a healthy-looking appearance." },
+      { title: "Silky Finish", body: "Leaves hair feeling smooth and soft." },
+      { title: "Sweet, Creamy Scent", body: "Wraps your hair in a rich, deliciously scented fragrance." },
+    ],
     benefits: [
       "Hydrates dry, frizz-prone lengths",
       "Leaves hair feeling softer and smoother",
@@ -139,7 +158,8 @@ export const LOCAL_IMAGES: Record<
 };
 
 // MOCK DATA. Used until Shopify credentials are set in .env.local.
-// The prices below are placeholders, not Komb's real ones.
+// Prices are the client's US dollar prices (revision list, October 2026).
+// Canadian prices come from Shopify Markets once the store is connected.
 // PLACEHOLDER SUBSCRIPTION PLANS. Not Komb's real offer: the frequencies and
 // the 10% saving are stand-ins until the client's subscription app is set up.
 // Shaped exactly like `product.sellingPlanGroups` from the Storefront API, so
@@ -176,8 +196,8 @@ const mock = (
   handle,
   title,
   variantId: `mock-variant-${handle}`,
-  price: { amount, currencyCode: "CAD" },
-  sellingPlans: toSellingPlans(MOCK_SELLING_PLAN_GROUPS, { amount, currencyCode: "CAD" }),
+  price: { amount, currencyCode: "USD" },
+  sellingPlans: toSellingPlans(MOCK_SELLING_PLAN_GROUPS, { amount, currencyCode: "USD" }),
   availableForSale: true,
   imageUrl: LOCAL_IMAGES[handle]?.url,
   pdpImageUrl: LOCAL_IMAGES[handle]?.pdpUrl,
@@ -186,8 +206,8 @@ const mock = (
 });
 
 export const MOCK_PRODUCTS: Product[] = [
-  mock("botanical-hair-serum", "Botanical Hair Serum", 48),
-  mock("renewal-hair-moisturizer", "Renewal Hair Moisturizer", 38),
+  mock("botanical-hair-serum", "Botanical Hair Serum", 43.99),
+  mock("renewal-hair-moisturizer", "Renewal Hair Moisturizer", 34.99),
 ];
 
 export const ROUTINE_HANDLES = ["botanical-hair-serum", "renewal-hair-moisturizer"];

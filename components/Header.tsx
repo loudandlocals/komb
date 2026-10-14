@@ -10,6 +10,7 @@ const NAV = [
   { href: "/shop", label: "Shop" },
   { href: "/#routine", label: "The Routine" },
   { href: "/our-story", label: "Our Story" },
+  { href: "/reviews", label: "Reviews" },
 ];
 
 const navText = "text-[0.74rem] whitespace-nowrap uppercase tracking-[0.16em]";
@@ -59,7 +60,7 @@ export function Header() {
       }`}
     >
       <p className="flex h-(--bar-h) items-center justify-center bg-umber px-4 font-caslon text-[0.8rem] font-normal tracking-[0.04em] text-offwhite italic [text-shadow:none]">
-        Nourish. Restore. Flourish.
+        Free shipping on subscriptions and orders over $50
       </p>
       <div className="container-site grid h-17 grid-cols-[1fr_auto_1fr] items-center">
         <button

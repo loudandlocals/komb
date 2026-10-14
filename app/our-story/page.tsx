@@ -32,26 +32,27 @@ export default function OurStoryPage() {
           />
         </div>
         <div className="grid max-w-xl justify-items-start gap-5" data-reveal="stagger">
-          <p className="text-[1.1rem] text-muted">
-            Maybe it is a wider part, a thinner ponytail, or more hair in the shower
-            than there used to be. Maybe your hair simply feels drier and harder to
-            manage than it once did.
+          <p>
+            Maybe it&rsquo;s a wider part, a thinner ponytail, or more hair in the
+            shower than you remember. Maybe your hair feels drier, less manageable,
+            or simply different than it once did. We know how personal those
+            changes can feel, because we&rsquo;ve experienced them ourselves.
           </p>
           <p>
-            These changes are common in your 30s and 40s, especially around
-            postpartum and perimenopause, and they can affect how you feel as much
-            as how you look. Komb was created for that moment.
+            Komb was started by two women navigating their own hair changes through
+            aging, hormonal shifts, motherhood, and life. We wanted nourishing
+            haircare that felt simple to use and met the standards we held for
+            ourselves. So, we created it.
           </p>
           <p>
-            Our approach is simple. Start with the scalp, the foundation of any
-            haircare routine, then carry that care through the lengths. One serum,
-            one moisturizer, clear directions.
+            Our approach starts at the scalp and carries that care through the
+            lengths. One serum, one moisturizer, and clear directions to make
+            consistent care an easy part of your routine.
           </p>
           <p>
-            We chose our ingredients thoughtfully and list every one of them, in
-            English and French. And we keep our promises realistic: Komb supports
-            scalp care and healthier-looking hair. It is not a treatment for hair
-            loss.
+            We choose our ingredients thoughtfully and share every one. Our promise
+            is personal: the same care, consideration, and standards we want for our
+            own hair go into every product we create for yours.
           </p>
           <p className="[font-family:var(--font-cormorant-italic),Georgia,serif] text-[1.75rem] text-accent italic">
             Nourish. Restore. Flourish.

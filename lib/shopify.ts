@@ -97,39 +97,59 @@ function toProduct(p: ShopifyProduct): Product | null {
   };
 }
 
-export async function getProducts(): Promise<Product[]> {
+// Shopify Markets: with a country, the Storefront API returns that market's
+// prices and currency (CAD for Canada, USD for the US). Without one, the
+// store's primary market is used.
+const inContext = (country?: string) =>
+  country
+    ? { vars: "$country: CountryCode", directive: "@inContext(country: $country)", value: { country } }
+    : { vars: "", directive: "", value: {} };
+
+export async function getProducts(country?: string): Promise<Product[]> {
   if (!isShopifyConfigured) return MOCK_PRODUCTS;
+  const ctx = inContext(country);
   const data = await storefront<{ products: { nodes: ShopifyProduct[] } }>(
     `${PRODUCT_FIELDS}
-     query Products { products(first: 24) { nodes { ...ProductFields } } }`
+     query Products${ctx.vars ? `(${ctx.vars})` : ""} ${ctx.directive} {
+       products(first: 24) { nodes { ...ProductFields } }
+     }`,
+    ctx.value
   );
   return data.products.nodes
     .map(toProduct)
     .filter((p): p is Product => p !== null);
 }
 
-export async function getProduct(handle: string): Promise<Product | null> {
+export async function getProduct(handle: string, country?: string): Promise<Product | null> {
   if (!isShopifyConfigured) {
     return MOCK_PRODUCTS.find((p) => p.handle === handle) ?? null;
   }
+  const ctx = inContext(country);
   const data = await storefront<{ product: ShopifyProduct | null }>(
     `${PRODUCT_FIELDS}
-     query Product($handle: String!) { product(handle: $handle) { ...ProductFields } }`,
-    { handle }
+     query Product($handle: String!${ctx.vars ? `, ${ctx.vars}` : ""}) ${ctx.directive} {
+       product(handle: $handle) { ...ProductFields }
+     }`,
+    { handle, ...ctx.value }
   );
   return data.product ? toProduct(data.product) : null;
 }
 
-// Creates a Shopify cart for the given lines and returns its hosted checkout URL.
-export async function createCheckoutUrl(lines: CheckoutLine[]): Promise<string> {
+// Creates a Shopify cart for the given lines and returns its hosted checkout
+// URL. The buyer's country sets the market, so checkout charges in their
+// currency.
+export async function createCheckoutUrl(
+  lines: CheckoutLine[],
+  country?: string
+): Promise<string> {
   const data = await storefront<{
     cartCreate: {
       cart: { checkoutUrl: string } | null;
       userErrors: { message: string }[];
     };
   }>(
-    `mutation CartCreate($lines: [CartLineInput!]!) {
-       cartCreate(input: { lines: $lines }) {
+    `mutation CartCreate($lines: [CartLineInput!]!, $buyerIdentity: CartBuyerIdentityInput) {
+       cartCreate(input: { lines: $lines, buyerIdentity: $buyerIdentity }) {
          cart { checkoutUrl }
          userErrors { message }
        }
@@ -140,6 +160,7 @@ export async function createCheckoutUrl(lines: CheckoutLine[]): Promise<string> 
         quantity: l.quantity,
         ...(l.sellingPlanId && { sellingPlanId: l.sellingPlanId }),
       })),
+      buyerIdentity: country ? { countryCode: country } : null,
     },
     false
   );

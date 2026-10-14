@@ -37,13 +37,13 @@ export function BuyNowButton({
   className?: string;
   ariaLabel?: string;
   quantity?: number;
-  // Adds the total for these products to the label: "Buy the routine — $86".
+  // Adds the total for these products to the label: "Buy the routine — $78.98 USD".
   showPrice?: boolean;
 }) {
   const { checkout, pending } = useCart();
   const total = {
     amount: products.reduce((n, p) => n + (plan?.price ?? p.price).amount * quantity, 0),
-    currencyCode: products[0]?.price.currencyCode ?? "CAD",
+    currencyCode: products[0]?.price.currencyCode ?? "USD",
   };
   const [mine, setMine] = useState(false);
   const soldOut = products.some((p) => !p.availableForSale);
@@ -71,6 +71,43 @@ export function BuyNowButton({
           {formatMoney(total)}
         </>
       )}
+    </button>
+  );
+}
+
+// Adds several products to the cart in one go, one of each, as one-time
+// purchases, with the combined price on the label: "Add both steps — $78.98 USD".
+export function AddBundleButton({
+  products,
+  label,
+  className = "",
+  ariaLabel,
+}: {
+  products: Product[];
+  label: string;
+  className?: string;
+  // Starts with the visible label, then names the products.
+  ariaLabel?: string;
+}) {
+  const { add } = useCart();
+  const total = {
+    amount: products.reduce((n, p) => n + p.price.amount, 0),
+    currencyCode: products[0]?.price.currencyCode ?? "USD",
+  };
+  return (
+    <button
+      type="button"
+      className={`btn btn-outline ${className}`}
+      aria-label={ariaLabel && `${ariaLabel}, ${formatMoney(total)}`}
+      disabled={products.some((p) => !p.availableForSale)}
+      onClick={() => products.forEach((p) => add(toItem(p)))}
+    >
+      {label}
+      <span aria-hidden className="mx-[0.6em]">
+        —
+      </span>
+      <span className="sr-only">, </span>
+      {formatMoney(total)}
     </button>
   );
 }

@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { JsonLd } from "@/components/JsonLd";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { SignupPopup } from "@/components/SignupPopup";
 import { OG_IMAGE, SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -83,6 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <CartDrawer />
         </CartProvider>
         <ScrollReveal />
+        <SignupPopup />
         <JsonLd
           data={{
             "@context": "https://schema.org",

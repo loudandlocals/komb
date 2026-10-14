@@ -14,7 +14,7 @@ export const HOME_FAQ: FaqItem[] = [
   {
     question: "Who is Komb for?",
     answer:
-      "Komb is made with women in their 30s and 40s in mind, whose hair is changing, often around postpartum or perimenopause. Both products are suitable for all hair types.",
+      "Komb is created for women navigating changes in their hair, through postpartum, perimenopause, and the changes that come with age, when hair feels thinner, drier, or simply different than it used to.",
   },
   {
     question: "Which step comes first?",
@@ -24,17 +24,17 @@ export const HOME_FAQ: FaqItem[] = [
   {
     question: "What results can I expect?",
     answer:
-      "A scalp that feels nourished, and lengths that feel hydrated, softer, smoother and easier to manage. Komb is cosmetic scalp and haircare. It is not a hair loss treatment, and we do not promise less shedding or regrowth.",
-  },
-  {
-    question: "Will it regrow my hair or stop shedding?",
-    answer:
-      "We do not make that promise. Komb is cosmetic scalp and haircare: the serum nourishes the scalp and hair, and the moisturizer hydrates the lengths. Neither is a treatment for hair loss. If you are worried about hair loss, it is worth speaking with your doctor.",
+      "A scalp that feels nourished, and lengths that feel hydrated, softer, smoother and easier to manage.",
   },
   {
     question: "What is in the products?",
     answer:
-      "The serum is a blend of nine botanical oils, including avocado, jojoba, rosemary and juniper berry. The moisturizer combines mango and shea butters and plant oils with conditioning ingredients, including silicones and fragrance. Every ingredient is listed in full on each product page and on the packaging, in English and French.",
+      "The serum is a blend of ten botanical oils, including pumpkin seed, rosemary, juniper berry, avocado and jojoba. The moisturizer combines mango and shea butters and plant oils with conditioning ingredients, including silicones and fragrance. Every ingredient is listed in full on each product page and on the packaging.",
+  },
+  {
+    question: "What if I have allergies or sensitive skin?",
+    answer:
+      "Please review the full ingredient list before using any Komb product, and avoid products containing ingredients you\u2019re allergic to. Our Renewal Hair Moisturizer contains sweet almond oil, so it may not be suitable for those with an almond or tree nut allergy. We recommend testing a small amount on a small area of skin before first use. If you experience redness, itching, burning, or irritation, stop using the product. A patch test may help identify initial irritation, but it cannot rule out an allergy or guarantee that a reaction won\u2019t develop with continued use or when applied to another area. If you have known allergies, a sensitive scalp, or an existing skin condition, speak with a dermatologist or healthcare professional before introducing a new product.",
   },
   {
     question: "Where is Komb made?",
@@ -60,7 +60,7 @@ export const PRODUCT_FAQ: Record<string, FaqItem[]> = {
     {
       question: "How do I use the Botanical Hair Serum?",
       answer:
-        "Apply a few drops directly to the scalp, focusing on targeted areas, and gently massage it in.",
+        "Apply a few drops directly to the scalp, focusing on targeted areas, and gently massage it in. For best results, use 3\u20134 times per week.",
     },
     {
       question: "How long should I leave it on?",
@@ -73,14 +73,14 @@ export const PRODUCT_FAQ: Record<string, FaqItem[]> = {
         "The serum is for all hair types. It is for external use only: avoid contact with the eyes, and stop using it if irritation occurs. If your scalp is sensitive, try a small amount first.",
     },
     {
-      question: "Will it regrow my hair or stop shedding?",
+      question: "What if I have allergies or sensitive skin?",
       answer:
-        "We do not make that promise. The serum is a cosmetic scalp care product that nourishes the scalp and hair. It is not a treatment for hair loss. If you are worried about hair loss, it is worth speaking with your doctor.",
+        "Please review the full ingredient list before using any Komb product, and avoid products containing ingredients you\u2019re allergic to. Our Renewal Hair Moisturizer contains sweet almond oil, so it may not be suitable for those with an almond or tree nut allergy. We recommend testing a small amount on a small area of skin before first use. If you experience redness, itching, burning, or irritation, stop using the product. A patch test may help identify initial irritation, but it cannot rule out an allergy or guarantee that a reaction won\u2019t develop with continued use or when applied to another area. If you have known allergies, a sensitive scalp, or an existing skin condition, speak with a dermatologist or healthcare professional before introducing a new product.",
     },
     {
       question: "Can I use it with the Renewal Hair Moisturizer?",
       answer:
-        "Yes. They are made as a two-step routine: the serum for the scalp first, then the moisturizer through the lengths.",
+        "Yes. They are made as a two-step routine: the serum for the scalp first, then the moisturizer through the lengths. Shampoo and rinse thoroughly to remove the serum before applying the moisturizer.",
     },
     {
       question: "How long does it keep once opened?",
@@ -113,9 +113,14 @@ export const PRODUCT_FAQ: Record<string, FaqItem[]> = {
         "It is for all hair types. It is for external use only: avoid contact with the eyes, and stop using it if irritation occurs.",
     },
     {
+      question: "What if I have allergies or sensitive skin?",
+      answer:
+        "Please review the full ingredient list before using any Komb product, and avoid products containing ingredients you\u2019re allergic to. Our Renewal Hair Moisturizer contains sweet almond oil, so it may not be suitable for those with an almond or tree nut allergy. We recommend testing a small amount on a small area of skin before first use. If you experience redness, itching, burning, or irritation, stop using the product. A patch test may help identify initial irritation, but it cannot rule out an allergy or guarantee that a reaction won\u2019t develop with continued use or when applied to another area. If you have known allergies, a sensitive scalp, or an existing skin condition, speak with a dermatologist or healthcare professional before introducing a new product.",
+    },
+    {
       question: "Can I use it with the Botanical Hair Serum?",
       answer:
-        "Yes. They are made as a two-step routine: the serum for the scalp first, then the moisturizer through the lengths.",
+        "Yes. They are made as a two-step routine: the serum for the scalp first, then the moisturizer through the lengths. Wash the serum out first: shampoo and rinse thoroughly, then apply the leave-in moisturizer.",
     },
     {
       question: "How long does it keep once opened?",

@@ -11,7 +11,8 @@ export type StripIngredient = {
   where: string;
   // Two or three sentences shown in the pop-up.
   description: string;
-  image: string;
+  // Optional while a photo is still to come; a marked placeholder shows.
+  image?: string;
   alt: string;
 };
 
@@ -116,7 +117,7 @@ export function IngredientStrip({
         const cardId = `ingredient-card-${i}`;
         return (
           <li
-            key={item.image}
+            key={item.name}
             onPointerEnter={(e) => e.pointerType === "mouse" && !isPhone() && setOpen(i)}
             onClick={(e) => {
               if (isPhone()) {
@@ -168,13 +169,19 @@ export function IngredientStrip({
                 edge. The photo is scaled past its box so the ingredient reads
                 larger without the grid cell growing. */}
             <div className="relative aspect-4/3 w-1/2 md:w-full">
-              <Image
-                src={item.image}
-                alt={item.alt}
-                fill
-                sizes="(min-width: 1024px) 34vw, (min-width: 768px) 50vw, 60vw"
-                className="pointer-events-none scale-125 object-cover mix-blend-multiply [mask-image:radial-gradient(closest-side,#000_78%,transparent_100%)]"
-              />
+              {item.image ? (
+                <Image
+                  src={item.image}
+                  alt={item.alt}
+                  fill
+                  sizes="(min-width: 1024px) 34vw, (min-width: 768px) 50vw, 60vw"
+                  className="pointer-events-none scale-125 object-cover mix-blend-multiply [mask-image:radial-gradient(closest-side,#000_78%,transparent_100%)]"
+                />
+              ) : (
+                <div className="grid size-full place-items-center border border-dashed border-gold-light text-center text-[0.68rem] font-medium tracking-[0.2em] text-muted uppercase">
+                  Photo to come
+                </div>
+              )}
             </div>
 
             {/* Description card. It sits over the photo half of the cell, so

@@ -6,6 +6,7 @@ const NAV = [
   { href: "/shop", label: "Shop" },
   { href: "/#routine", label: "The Routine" },
   { href: "/our-story", label: "Our Story" },
+  { href: "/reviews", label: "Reviews" },
 ];
 
 const PRODUCTS = [
@@ -73,6 +74,9 @@ export function Footer() {
                 <br />
                 Woodbridge, ON L4L 0C7, Canada
               </address>
+              <a className={smallLink} href={`mailto:${SITE.email}`}>
+                {SITE.email}
+              </a>
               <a className={smallLink} href={SITE.instagram} rel="noopener noreferrer" target="_blank">
                 @kombhairinc<span className="sr-only"> on Instagram (opens in a new tab)</span>
               </a>
@@ -132,7 +136,15 @@ export function Footer() {
         </section>
 
         <div className="mt-12 grid gap-4 border-t border-komb-gold/70 pt-6 text-[0.78rem] text-offwhite/80 md:grid-cols-[auto_1fr] md:gap-10">
-          <p className="whitespace-nowrap">© {new Date().getFullYear()} Komb Hair Inc.</p>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <p className="whitespace-nowrap">© {new Date().getFullYear()} Komb Hair Inc.</p>
+            <Link href="/terms" className={smallLink}>
+              Terms of Use
+            </Link>
+            <Link href="/shipping-returns" className={smallLink}>
+              Shipping &amp; Returns
+            </Link>
+          </div>
           <p className="md:text-right">
             Komb products are cosmetics that care for the scalp and hair. They are not
             intended to diagnose, treat or prevent any medical condition, including

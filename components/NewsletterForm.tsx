@@ -8,7 +8,7 @@ type Status = { kind: "idle" | "busy" | "done" | "preview" | "error"; message?: 
 // Footer email sign-up. Posts to /api/subscribe, which decides the provider.
 // The consent line covers what Canadian anti-spam law asks for: what will be
 // sent, who is sending it, and that it can be stopped at any time.
-export function NewsletterForm() {
+export function NewsletterForm({ onSubscribed }: { onSubscribed?: () => void } = {}) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const inputId = useId();
@@ -40,6 +40,7 @@ export function NewsletterForm() {
       } else {
         setStatus({ kind: "done", message: "Thank you. You are on the list." });
         setEmail("");
+        onSubscribed?.();
       }
     } catch {
       setStatus({ kind: "error", message: "We couldn't sign you up just now. Please try again." });

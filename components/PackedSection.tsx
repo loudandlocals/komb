@@ -18,7 +18,6 @@ export function PackedSection({ product }: { product: Product }) {
           ? "A clear glass dropper bottle with a bamboo collar, in its printed carton."
           : "A speckled cream jar, in its printed carton.",
     },
-    { term: "Labelling", detail: "English and French." },
     { term: "For", detail: "All hair types." },
     { term: "Once opened", detail: "Use within 6 months." },
     {

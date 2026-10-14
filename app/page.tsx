@@ -11,6 +11,7 @@ import { StickyBuyBar } from "@/components/StickyBuyBar";
 import { ROUTINE_HANDLES } from "@/lib/catalog";
 import { HOME_FAQ } from "@/lib/faq";
 import { INGREDIENTS } from "@/lib/ingredients";
+import { visitorCountry } from "@/lib/market";
 import { getProducts } from "@/lib/shopify";
 import { OG_IMAGE } from "@/lib/site";
 import type { Product } from "@/lib/types";
@@ -32,21 +33,21 @@ const DIFFERENT: DifferentSlide[] = [
   },
   {
     title: "Made for changing hair",
-    body: "Created with women in their 30s and 40s in mind, through postpartum, perimenopause and everything between.",
+    body: "Created for women navigating changes in their hair, through postpartum, perimenopause, and the changes that come with age, when hair feels thinner, drier, or simply different than it used to.",
     image: "/images/benefits/changing-hair.png",
     alt: "A woman with long wavy brown hair holding a bottle of Komb Botanical Hair Serum",
     position: "object-center",
   },
   {
     title: "Ingredients you can read",
-    body: "Every ingredient is listed in full, in English and French, so you know what you are putting on your scalp and hair.",
+    body: "Every ingredient is listed in full, so you know what you are putting on your scalp and hair.",
     image: "/images/benefits/ingredient.jpg",
     alt: "Rosemary, olives, half an avocado, plant butter and juniper berries laid out from above",
     position: "object-center",
   },
   {
-    title: "Honest expectations",
-    body: "No miracle promises. Just clear directions and a routine that helps your hair look and feel cared for.",
+    title: "Created by Women. Inspired by you.",
+    body: "We understand that your hair\u2019s needs change through different stages of life. That\u2019s why we created Komb, a simple, nourishing routine to help you care for your hair and feel confident in it.",
     image: "/images/banner-2.png",
     alt: "The serum and moisturizer displayed on top of their cartons",
     position: "object-[45%_50%]",
@@ -79,7 +80,7 @@ function RoutineStep({ number, product }: { number: number; product: Product }) 
 }
 
 export default async function HomePage() {
-  const products = await getProducts();
+  const products = await getProducts(await visitorCountry());
   const routine = ROUTINE_HANDLES.map((h) => products.find((p) => p.handle === h)).filter(
     (p) => p !== undefined
   );
@@ -213,9 +214,8 @@ export default async function HomePage() {
           data-reveal
         >
           <li>For all hair types</li>
-          <li>Full ingredient lists, in English and French</li>
+          <li>Full ingredient lists</li>
           <li>Made in USA</li>
-          <li>A Canadian company</li>
         </ul>
       </section>
 
@@ -338,7 +338,7 @@ export default async function HomePage() {
             Thoughtfully chosen, <em>plainly listed</em>
           </h2>
           <p className="max-w-xl text-muted">
-            Nine botanical oils in the serum. Mango and shea butters in the
+            Ten botanical oils in the serum, now with pumpkin seed oil. Mango and shea butters in the
             moisturizer. Here are a few you will find on the label.
           </p>
         </header>
@@ -383,8 +383,9 @@ export default async function HomePage() {
                 Our promise
               </h2>
               <p className="font-caslon text-[clamp(1.4rem,2.3vw,2.1rem)] leading-[1.2] tracking-[-0.02em] italic">
-                Hair changes can feel personal. We won&rsquo;t promise miracles. We will
-                give you a nourishing routine, clear directions and honest expectations.
+                We created the haircare we wanted for ourselves, with thoughtful
+                ingredients and uncompromising care. Because the standards we hold
+                for your hair are the same ones we hold for our own.
               </p>
               <div className="flex flex-wrap items-center gap-x-7 gap-y-4">
                 {routine.length === 2 && (

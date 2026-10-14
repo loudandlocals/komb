@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { visitorCountry } from "@/lib/market";
 import { createCheckoutUrl, isShopifyConfigured } from "@/lib/shopify";
 import type { CheckoutLine } from "@/lib/types";
 
@@ -25,7 +26,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    return NextResponse.json({ url: await createCheckoutUrl(lines) });
+    return NextResponse.json({ url: await createCheckoutUrl(lines, await visitorCountry()) });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
