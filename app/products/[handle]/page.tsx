@@ -271,7 +271,8 @@ export default async function ProductPage({ params }: Props) {
           <IngredientStrip
             items={featured}
             linkTitle="The full list"
-            columns={5}
+            columns={3}
+            centred
             note={
               product.kind === "moisturizer"
                 ? {

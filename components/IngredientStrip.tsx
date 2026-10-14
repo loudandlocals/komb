@@ -41,6 +41,7 @@ export function IngredientStrip({
   linkTitle = "The full lists",
   links,
   columns = 3,
+  centred = false,
   note,
 }: {
   items: StripIngredient[];
@@ -48,9 +49,10 @@ export function IngredientStrip({
   // Where the last cell sends people for the complete ingredient lists.
   links: { href: string; label: string }[];
   // Columns on laptops and up. Two keeps the grid to two columns throughout.
-  // Five puts up to five ingredients in one row on laptops (two per row on
-  // tablets), centres any shorter row, and moves the link under the grid.
   columns?: 2 | 3 | 5;
+  // Centred rows: `columns` per row on laptops (two per row on tablets), any
+  // shorter last row centred, and the full-list link moved under the grid.
+  centred?: boolean;
   // An optional text-only cell after the ingredients.
   note?: { title: string; tagline: [string, string]; body: string };
 }) {
@@ -69,11 +71,18 @@ export function IngredientStrip({
   // In a two-column grid the link gets a cell only when that completes the
   // last row; otherwise it sits under the grid.
   const cells = items.length + (note ? 1 : 0);
-  const five = columns === 5;
-  const linkInGrid = columns === 3 || (columns === 2 && cells % 2 === 1);
-  // Cell widths for the five-column layout, which wraps and centres rows.
-  const fiveCell = five
-    ? "md:w-[calc(50%-var(--gx)/2)] lg:w-[calc(20%-var(--gx)*4/5)]"
+  // Narrow cells (five across) get smaller names that may wrap.
+  const five = centred && columns === 5;
+  const linkInGrid = !centred && (columns === 3 || (columns === 2 && cells % 2 === 1));
+  // Cell widths for the centred layout, which wraps and centres rows.
+  const fiveCell = centred
+    ? `md:w-[calc(50%-var(--gx)/2)] ${
+        columns === 5
+          ? "lg:w-[calc(20%-var(--gx)*4/5)]"
+          : columns === 3
+            ? "lg:w-[calc(33.333%-var(--gx)*2/3)]"
+            : ""
+      }`
     : "";
   const linkButtons = (
         <div className="flex flex-wrap justify-center gap-3">
@@ -112,8 +121,10 @@ export function IngredientStrip({
     <>
     <ul
       className={`container-site gap-y-12 md:gap-y-20 ${
-        five
-          ? "grid [--gx:clamp(1rem,2.5vw,2.5rem)] md:flex md:flex-wrap md:justify-center md:gap-x-(--gx)"
+        centred
+          ? `grid md:flex md:flex-wrap md:justify-center md:gap-x-(--gx) ${
+              five ? "[--gx:clamp(1rem,2.5vw,2.5rem)]" : "[--gx:clamp(2rem,6vw,6rem)]"
+            }`
           : columns === 2
             ? "grid max-w-[58rem]! gap-x-[clamp(2rem,8vw,8rem)] md:grid-cols-2"
             : "grid gap-x-[clamp(2rem,6vw,6rem)] md:grid-cols-2 lg:grid-cols-3"
@@ -142,7 +153,7 @@ export function IngredientStrip({
               if (!e.currentTarget.contains(e.relatedTarget)) setOpen((o) => (o === i ? null : o));
             }}
             onKeyDown={(e) => e.key === "Escape" && setOpen(null)}
-            className={`relative flex items-center gap-6 max-md:cursor-pointer ${five ? `md:gap-6 ${fiveCell}` : "md:gap-10"} ${
+            className={`relative flex items-center gap-6 max-md:cursor-pointer ${five ? "md:gap-6" : "md:gap-10"} ${fiveCell} ${
               textFirst ? "flex-row md:flex-col" : "flex-row-reverse md:flex-col-reverse"
             }`}
           >
