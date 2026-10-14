@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { NewsletterForm } from "./NewsletterForm";
@@ -59,9 +60,21 @@ export function SignupPopup() {
       aria-labelledby="signup-popup-title"
       onClose={close}
       onClick={(e) => e.target === dialog.current && close()}
-      className="m-auto w-[min(100%-2rem,34rem)] max-w-none bg-umber p-0 text-offwhite backdrop:bg-ink/50 [&_:focus-visible]:outline-offwhite"
+      className="m-auto w-[min(100%-2rem,34rem)] max-w-none bg-umber p-0 text-offwhite backdrop:bg-ink/50 md:w-[min(100%-3rem,56rem)] [&_:focus-visible]:outline-offwhite"
     >
-      <div className="relative grid gap-5 px-[clamp(1.5rem,5vw,3rem)] pt-12 pb-8">
+      {/* Two halves from tablets up: the photo first, then the offer. Phones
+          get the offer alone, to keep the pop-up short. */}
+      <div className="md:grid md:grid-cols-[5fr_6fr]">
+      <div className="relative max-md:hidden">
+        <Image
+          src="/images/steps/center-image.png"
+          alt=""
+          fill
+          sizes="(min-width: 768px) 25rem, 1px"
+          className="object-cover object-[50%_70%]"
+        />
+      </div>
+      <div className="relative grid content-center gap-5 px-[clamp(1.5rem,5vw,3rem)] pt-12 pb-8">
         <button
           type="button"
           onClick={close}
@@ -91,6 +104,7 @@ export function SignupPopup() {
         >
           No thanks
         </button>
+      </div>
       </div>
     </dialog>
   );
