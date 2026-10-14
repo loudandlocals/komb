@@ -5,16 +5,15 @@ import type { StripIngredient } from "@/components/IngredientStrip";
 // Taglines describe the ingredient's character or cosmetic feel only.
 export const INGREDIENTS: (StripIngredient & { handles: string[] })[] = [
   {
-    // New to the serum and a focal ingredient. No photo yet: the grid shows a
-    // marked placeholder until public/images/ingredients/clean/pumpkin.jpg
-    // exists and `image` below is set to it.
+    // New to the serum and a focal ingredient.
     name: "Pumpkin seed oil",
     handles: ["botanical-hair-serum"],
     tagline: ["new to", "the serum"],
     where: "In the serum",
     description:
       "A nourishing seed oil, newly added to the serum. It joins rosemary and juniper berry at the heart of the blend, made to moisturize a dry scalp and condition dry strands.",
-    alt: "Pumpkin seeds resting in a pool of oil",
+    image: "/images/ingredients/clean/pumpkin.jpg",
+    alt: "Green pumpkin seeds resting in a pool of dark green oil",
   },
   {
     name: "Rosemary oil",
