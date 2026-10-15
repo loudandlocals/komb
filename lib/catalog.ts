@@ -56,7 +56,7 @@ export const CONTENT: Record<string, ProductContent> = {
       "For all hair types",
     ],
     directions:
-      "Apply a few drops directly to the scalp, focusing on targeted areas. Gently massage into the scalp. Leave on for at least 30 minutes before washing, or leave on overnight for a more intensive treatment.",
+      "Apply one full dropper directly to the scalp, focusing on targeted areas. Gently massage into the scalp. Leave on for at least 30 minutes before washing, or leave on overnight for a more intensive treatment.",
     ingredients:
       "Persea Americana (Avocado) Oil, Simmondsia Chinensis (Jojoba) Oil, Oryza Sativa (Rice Bran) Oil, Helianthus Annuus (Sunflower) Seed Oil, Olea Europaea (Olive) Oil, Vitis Vinifera (Grape) Seed Oil, Carthamus Tinctorius (Safflower) Oil, Cucurbita Pepo (Pumpkin) Seed Oil, Rosmarinus Officinalis (Rosemary) Oil, Juniperus Communis (Juniper Berry) Oil, Limonene, Linalool.",
     keyIngredients: ["Pumpkin seed oil", "Rosemary oil", "Juniper berry oil", "Avocado oil", "Jojoba oil"],

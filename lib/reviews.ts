@@ -19,7 +19,7 @@ export const PLACEHOLDER_REVIEWS: Review[] = [
     handle: "botanical-hair-serum",
     rating: 5,
     title: "My scalp feels so much more comfortable",
-    body: "Sample text. A few drops before bed has become my favourite part of the week. My scalp feels less dry and my hair looks shinier.",
+    body: "Sample text. A full dropper before bed has become my favourite part of the week. My scalp feels less dry and my hair looks shinier.",
   },
   {
     name: "Sample reviewer B.",

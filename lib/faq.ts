@@ -19,7 +19,7 @@ export const HOME_FAQ: FaqItem[] = [
   {
     question: "Which step comes first?",
     answer:
-      "Start with the Botanical Hair Serum. Apply a few drops to the scalp, massage gently, and leave it on for at least 30 minutes, or overnight, before washing. Then use the Renewal Hair Moisturizer through your lengths, on wet or dry hair, and style as usual.",
+      "Start with the Botanical Hair Serum. Apply one full dropper directly to the scalp, massage gently, and leave it on for at least 30 minutes, or overnight, before washing. Then use the Renewal Hair Moisturizer through your lengths, on wet or dry hair, and style as usual.",
   },
   {
     question: "What results can I expect?",
@@ -60,7 +60,7 @@ export const PRODUCT_FAQ: Record<string, FaqItem[]> = {
     {
       question: "How do I use the Botanical Hair Serum?",
       answer:
-        "Apply a few drops directly to the scalp, focusing on targeted areas, and gently massage it in. For best results, use 3\u20134 times per week.",
+        "Apply one full dropper directly to the scalp, focusing on targeted areas, and gently massage it in. For best results, use 3\u20134 times per week.",
     },
     {
       question: "How long should I leave it on?",
