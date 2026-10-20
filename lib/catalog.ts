@@ -149,11 +149,11 @@ export const LOCAL_IMAGES: Record<
     alt: "Komb Botanical Hair Serum, a 50 mL clear glass dropper bottle with a bamboo collar",
   },
   "renewal-hair-moisturizer": {
-    url: "/products/moisturizer.png",
-    pdpUrl: "/products/moisturizer-pdp.png",
+    url: "/products/moisturizer-jar.png",
+    pdpUrl: "/products/moisturizer-jar-pdp.png",
     packedUrl: "/products/moisturizer-packed.png",
     packedAlt: "Renewal Hair Moisturizer jar standing beside its cream carton",
-    alt: "Komb Renewal Hair Moisturizer, a 100 mL speckled cream jar",
+    alt: "Komb Renewal Hair Moisturizer, a 100 mL cream jar with a wood-grain lid",
   },
 };
 
