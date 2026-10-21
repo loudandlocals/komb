@@ -11,7 +11,12 @@ export function ProductCard({ product }: { product: Product }) {
       <Link
         href={href}
         aria-label={`View details: ${product.title}`}
-        className="group/media on-greige relative grid aspect-4/5 place-items-center overflow-hidden rounded-xs bg-greige"
+        // A photo sits on the same warm cream as the product shots' own
+        // backdrop, so a transparent cut-out (the jar) matches the serum
+        // card; the drawn fallback keeps the greige panel.
+        className={`group/media on-greige relative grid aspect-4/5 place-items-center overflow-hidden rounded-xs ${
+          product.imageUrl ? "bg-[#f5f0e8]" : "bg-greige"
+        }`}
       >
         <ProductArt
           kind={product.kind}

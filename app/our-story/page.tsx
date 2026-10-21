@@ -24,11 +24,11 @@ export default function OurStoryPage() {
       <div className="grid items-start gap-[clamp(2rem,6vw,6rem)] md:grid-cols-[5fr_6fr]">
         <div className="arch relative mx-auto max-w-96 md:max-w-none" data-reveal="image">
           <Image
-            src="/images/hair.jpg"
-            alt="Long blonde and long brown hair side by side, with the serum and moisturizer in front"
+            src="/images/our-story-products.jpg"
+            alt="The serum and moisturizer on a round wooden side table in front of sheer linen curtains"
             fill
             sizes="(min-width: 768px) 40vw, 24rem"
-            className="object-cover object-[50%_70%]"
+            className="object-cover object-[50%_60%]"
           />
         </div>
         <div className="grid max-w-xl justify-items-start gap-5 md:pt-[clamp(2rem,6vw,5rem)]" data-reveal="stagger">

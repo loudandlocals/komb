@@ -48,9 +48,9 @@ const DIFFERENT: DifferentSlide[] = [
   {
     title: "Created by Women. Inspired by you.",
     body: "We understand that your hair\u2019s needs change through different stages of life. That\u2019s why we created Komb, a simple, nourishing routine to help you care for your hair and feel confident in it.",
-    image: "/images/banner-2.png",
-    alt: "The serum and moisturizer displayed on top of their cartons",
-    position: "object-[45%_50%]",
+    image: "/images/bedside-2.jpg",
+    alt: "A hand reaching for the serum on a wooden bedside table, with the moisturizer and a hairbrush beside it",
+    position: "object-[50%_45%]",
   },
 ];
 
