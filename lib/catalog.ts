@@ -151,7 +151,7 @@ export const LOCAL_IMAGES: Record<
   "renewal-hair-moisturizer": {
     url: "/products/moisturizer-jar.png",
     pdpUrl: "/products/moisturizer-jar-pdp.png",
-    packedUrl: "/products/moisturizer-packed.png",
+    packedUrl: "/products/moisturizer-packed-2.jpg",
     packedAlt: "Renewal Hair Moisturizer jar standing beside its cream carton",
     alt: "Komb Renewal Hair Moisturizer, a 100 mL cream jar with a wood-grain lid",
   },

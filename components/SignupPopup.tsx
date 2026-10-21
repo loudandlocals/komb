@@ -67,7 +67,7 @@ export function SignupPopup() {
       <div className="md:grid md:grid-cols-[5fr_6fr]">
       <div className="relative max-md:hidden">
         <Image
-          src="/images/steps/center-image.png"
+          src="/images/bedside-2.jpg"
           alt=""
           fill
           sizes="(min-width: 768px) 25rem, 1px"

@@ -129,7 +129,7 @@ export default async function HomePage() {
           {/* Phones show the video first, then the photo; side by side from tablets up. */}
           <div className="relative overflow-hidden max-md:order-2">
             <Image
-              src="/images/hero-image-1.png"
+              src="/images/hero-products-2.jpg"
               alt="Komb Botanical Hair Serum in a glass dropper bottle beside a jar of Renewal Hair Moisturizer"
               fill
               priority
@@ -298,7 +298,7 @@ export default async function HomePage() {
 
           <div className="relative order-1 aspect-4/5 md:order-none">
             <Image
-              src="/images/steps/center-image-3.png"
+              src="/images/steps/center-image-4.jpg"
               alt="The serum and moisturizer on a wooden tray beside a bathroom basin, with a stack of cotton pads"
               fill
               sizes="(min-width: 768px) 45vw, 100vw"
@@ -364,16 +364,19 @@ export default async function HomePage() {
       />
 
       <section aria-labelledby="promise-title" className="container-site pb-section">
-        {/* No panel: the transparent cut-out of the basket, with its own soft
-            shadow, sits straight on the page background beside the text. */}
+        {/* No panel: the basket photo's pale backdrop is levelled to white in
+            basket-clean.jpg, so multiply drops it out and the basket and its
+            woven shadow sit straight on the page background. It is not
+            animated in, since a fade or transform would stop the blend while
+            it ran. */}
         <div className="grid items-center gap-x-[clamp(2rem,6vw,6rem)] gap-y-8 text-ink md:grid-cols-[11fr_9fr]">
-          <div className="relative mx-auto aspect-square w-full max-w-md md:max-w-none" data-reveal="image">
+          <div className="relative mx-auto aspect-square w-full max-w-md md:max-w-none">
             <Image
-              src="/images/box-cutout.png"
+              src="/images/basket-clean.jpg"
               alt="The serum and moisturizer in a woven basket beside a folded towel"
               fill
               sizes="(min-width: 768px) 46vw, 100vw"
-              className="object-contain"
+              className="object-contain mix-blend-multiply"
             />
           </div>
 
