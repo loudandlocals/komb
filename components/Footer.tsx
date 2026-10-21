@@ -155,6 +155,9 @@ export function Footer() {
             hair loss.
           </p>
         </div>
+        <p className="mt-6 text-[0.68rem] font-medium tracking-[0.22em] text-offwhite/70 uppercase md:text-right">
+          Site by JLU Creative
+        </p>
       </div>
     </footer>
   );
