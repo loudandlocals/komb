@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SITE } from "@/lib/site";
+import { CurrencySwitcher } from "./CurrencySwitcher";
 import { NewsletterForm } from "./NewsletterForm";
 
 const NAV = [
@@ -8,6 +9,7 @@ const NAV = [
   { href: "/our-story", label: "Our Story" },
   { href: "/reviews", label: "Reviews" },
   { href: "/contact", label: "Contact" },
+  { href: "/affiliates", label: "Affiliates" },
 ];
 
 const PRODUCTS = [
@@ -136,7 +138,7 @@ export function Footer() {
           <NewsletterForm />
         </section>
 
-        <div className="mt-12 grid gap-4 border-t border-komb-gold/70 pt-6 text-[0.78rem] text-offwhite/80 md:grid-cols-[auto_1fr] md:gap-10">
+        <div className="mt-12 grid gap-4 border-t border-komb-gold/70 pt-6 text-[0.78rem] text-offwhite/80 xl:grid-cols-[auto_1fr] xl:gap-10">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
             <p className="whitespace-nowrap">© {new Date().getFullYear()} Komb Hair Inc.</p>
             <Link href="/terms" className={smallLink}>
@@ -148,8 +150,9 @@ export function Footer() {
             <Link href="/privacy" className={smallLink}>
               Privacy Policy
             </Link>
+            <CurrencySwitcher />
           </div>
-          <p className="md:text-right">
+          <p className="max-w-3xl xl:max-w-none xl:text-right">
             Komb products are cosmetics that care for the scalp and hair. They are not
             intended to diagnose, treat or prevent any medical condition, including
             hair loss.
