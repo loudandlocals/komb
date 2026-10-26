@@ -185,20 +185,28 @@ export default async function ProductPage({ params }: Props) {
             beside the dots under the panel on smaller ones. */}
         {prev && next && (
           <>
-            <Link
-              href={`/products/${prev.handle}`}
-              aria-label={`Previous product: ${prev.title}`}
-              className={`${arrow} max-lg:hidden lg:absolute lg:top-1/2 lg:left-4 lg:-translate-y-1/2`}
-            >
-              <span aria-hidden>←</span>
-            </Link>
-            <Link
-              href={`/products/${next.handle}`}
-              aria-label={`Next product: ${next.title}`}
-              className={`${arrow} max-lg:hidden lg:absolute lg:top-1/2 lg:right-4 lg:-translate-y-1/2`}
-            >
-              <span aria-hidden>→</span>
-            </Link>
+            {/* A full-height rail down the side of the panel; the arrow sticks
+                at the middle of the screen while the panel scrolls. */}
+            <div className="absolute inset-y-0 left-4 max-lg:hidden">
+              <Link
+                href={`/products/${prev.handle}`}
+                aria-label={`Previous product: ${prev.title}`}
+                className={`${arrow} sticky top-[calc((100dvh+var(--header-h))/2-1.375rem)]`}
+              >
+                <span aria-hidden>←</span>
+              </Link>
+            </div>
+            {/* A full-height rail down the side of the panel; the arrow sticks
+                at the middle of the screen while the panel scrolls. */}
+            <div className="absolute inset-y-0 right-4 max-lg:hidden">
+              <Link
+                href={`/products/${next.handle}`}
+                aria-label={`Next product: ${next.title}`}
+                className={`${arrow} sticky top-[calc((100dvh+var(--header-h))/2-1.375rem)]`}
+              >
+                <span aria-hidden>→</span>
+              </Link>
+            </div>
             {/* Above the enlarged product photo, which otherwise covers the dots. */}
             <nav aria-label="Products" className="relative z-1 flex items-center justify-center gap-4">
               <Link href={`/products/${prev.handle}`} aria-label={`Previous product: ${prev.title}`} className={`${arrow} lg:hidden`}>
