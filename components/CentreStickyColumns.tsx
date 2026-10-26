@@ -2,18 +2,19 @@
 
 import { useEffect } from "react";
 
-// Product page top panel, large screens: the details and photo columns are
-// sticky (top-aligned) so they stay in view while the purchase column grows.
-// Top-aligned would put them above the purchase column on first load, so this
-// gives each a top margin that centres it against the panel as first
-// rendered. The margins are set once per layout and are not recalculated when
+// Product page top panel, large screens: the details and photo share one
+// sticky wrapper (top-aligned) so they stay in view together while the
+// purchase column grows. Top-aligned would put them above the purchase column
+// on first load, so this gives the wrapper a top margin that centres it
+// against the panel as first rendered. The margins are set once per layout and are not recalculated when
 // an accordion opens, so nothing jumps while the visitor is using it.
 export function CentreStickyColumns({ gridId }: { gridId: string }) {
   useEffect(() => {
     const grid = document.getElementById(gridId);
     if (!grid) return;
     const columns = Array.from(grid.children) as HTMLElement[];
-    const sticky = columns.slice(0, 2);
+    // The first child is the sticky wrapper holding the details and photo.
+    const sticky = columns.slice(0, 1);
     const wide = window.matchMedia("(min-width: 1024px)");
 
     const reset = () =>
