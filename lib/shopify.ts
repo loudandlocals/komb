@@ -8,10 +8,24 @@ import {
 import type { CheckoutLine, Product, ProductContent } from "./types";
 
 const domain = process.env.SHOPIFY_STORE_DOMAIN;
-const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 const version = process.env.SHOPIFY_API_VERSION ?? "2026-07";
 
-export const isShopifyConfigured = Boolean(domain && token);
+// All Storefront API calls run on the server, so the private token is
+// preferred (it is meant for server use and has higher rate limits). The
+// public token works as a fallback. Both come from Shopify admin > Sales
+// channels > Headless > Storefront API.
+const privateToken = process.env.SHOPIFY_STOREFRONT_PRIVATE_TOKEN;
+const publicToken =
+  process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN ??
+  process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_PUBLIC_TOKEN;
+
+const authHeader: Record<string, string> = privateToken
+  ? { "Shopify-Storefront-Private-Token": privateToken }
+  : publicToken
+    ? { "X-Shopify-Storefront-Access-Token": publicToken }
+    : {};
+
+export const isShopifyConfigured = Boolean(domain && (privateToken || publicToken));
 
 async function storefront<T>(
   query: string,
@@ -22,7 +36,7 @@ async function storefront<T>(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-Shopify-Storefront-Access-Token": token!,
+      ...authHeader,
     },
     body: JSON.stringify({ query, variables }),
     ...(revalidate === false
