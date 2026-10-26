@@ -142,15 +142,15 @@ export const LOCAL_IMAGES: Record<
   { url: string; pdpUrl?: string; packedUrl?: string; packedAlt?: string; alt: string }
 > = {
   "botanical-hair-serum": {
-    url: "/products/serum-cutout.png",
-    pdpUrl: "/products/serum-cutout-pdp.png",
+    url: "/products/serum-shadow.png",
+    pdpUrl: "/products/serum-shadow-pdp.png",
     packedUrl: "/products/serum-packed.png.png",
     packedAlt: "Botanical Hair Serum dropper bottle standing beside its cream carton",
     alt: "Komb Botanical Hair Serum, a 50 mL clear glass dropper bottle with a bamboo collar",
   },
   "renewal-hair-moisturizer": {
-    url: "/products/moisturizer-cutout.png",
-    pdpUrl: "/products/moisturizer-cutout-pdp.png",
+    url: "/products/moisturizer-shadow.png",
+    pdpUrl: "/products/moisturizer-shadow-pdp.png",
     packedUrl: "/products/moisturizer-packed-2.jpg",
     packedAlt: "Renewal Hair Moisturizer jar standing beside its cream carton",
     alt: "Komb Renewal Hair Moisturizer, a 100 mL cream jar with a wood-grain lid",
