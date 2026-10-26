@@ -142,8 +142,8 @@ export const LOCAL_IMAGES: Record<
   { url: string; pdpUrl?: string; packedUrl?: string; packedAlt?: string; alt: string }
 > = {
   "botanical-hair-serum": {
-    url: "/products/serum-shadow.png",
-    pdpUrl: "/products/serum-shadow-pdp.png",
+    url: "/products/serum.png",
+    pdpUrl: "/products/serum-pdp.png",
     packedUrl: "/products/serum-packed.png.png",
     packedAlt: "Botanical Hair Serum dropper bottle standing beside its cream carton",
     alt: "Komb Botanical Hair Serum, a 50 mL clear glass dropper bottle with a bamboo collar",
