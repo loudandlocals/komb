@@ -27,7 +27,12 @@ export function ProductArt({
         height={1000}
         sizes={sizes}
         priority={priority}
-        className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+        // Shopify images can be any shape, often a tight cut-out, so they are
+        // fitted whole with some room around them. The site's own shots are
+        // already framed on a square and fill their box.
+        className={`size-full transition-transform duration-500 group-hover:scale-[1.03] ${
+          imageUrl.startsWith("http") ? "object-contain p-[10%]" : "object-cover"
+        }`}
       />
     );
   }

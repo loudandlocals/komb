@@ -90,9 +90,12 @@ function toProduct(p: ShopifyProduct): Product | null {
     sellingPlans: toSellingPlans(p.sellingPlanGroups, price),
     requiresSellingPlan: p.requiresSellingPlan,
     availableForSale: p.availableForSale && variant.availableForSale,
-    imageUrl: p.featuredImage?.url ?? LOCAL_IMAGES[p.handle]?.url,
-    pdpImageUrl: p.featuredImage ? undefined : LOCAL_IMAGES[p.handle]?.pdpUrl,
-    imageAlt: p.featuredImage?.altText ?? LOCAL_IMAGES[p.handle]?.alt ?? p.title,
+    // The site's own framed product shots win for the products it knows, so
+    // the layouts stay as designed whatever is uploaded in Shopify. Any other
+    // product uses its Shopify image.
+    imageUrl: LOCAL_IMAGES[p.handle]?.url ?? p.featuredImage?.url,
+    pdpImageUrl: LOCAL_IMAGES[p.handle]?.pdpUrl,
+    imageAlt: LOCAL_IMAGES[p.handle]?.alt ?? p.featuredImage?.altText ?? p.title,
     ...(CONTENT[p.handle] ?? fallbackContent(p)),
   };
 }
