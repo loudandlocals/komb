@@ -7,6 +7,7 @@ import { Faq } from "@/components/Faq";
 import { JsonLd } from "@/components/JsonLd";
 import { OpenHashDetails } from "@/components/OpenHashDetails";
 import { IngredientStrip } from "@/components/IngredientStrip";
+import { CentreStickyColumns } from "@/components/CentreStickyColumns";
 import { GoalSection } from "@/components/GoalSection";
 import { PackedSection } from "@/components/PackedSection";
 import { ProductArt } from "@/components/ProductArt";
@@ -80,7 +81,7 @@ export default async function ProductPage({ params }: Props) {
         aria-labelledby="product-title"
         className="relative grid min-h-[calc(100dvh-var(--header-h))] content-center gap-y-8 overflow-x-clip px-gutter pt-8 pb-8 [animation:panel-in_0.6s_ease-out_both] lg:px-[clamp(5.5rem,8.5vw,11rem)]"
       >
-        <div className="mx-auto grid w-full max-w-[82rem] items-center gap-x-[clamp(1.5rem,3vw,3rem)] gap-y-10 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+        <div id="product-top-grid" className="mx-auto grid w-full max-w-[82rem] items-center gap-x-[clamp(1.5rem,3vw,3rem)] gap-y-10 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
           {/* Details. On large screens the details and the photo stay in view
               (sticky) while the purchase column grows, for example when an
               accordion row is opened. */}
@@ -114,7 +115,7 @@ export default async function ProductPage({ params }: Props) {
               photo's empty backdrop spills under the side columns, which sit
               above it. The box sits on the centre line of the page, with
               the two side columns the same width either side of it. */}
-          <div className="relative order-1 mx-auto aspect-square w-[min(100%,24rem)] lg:sticky lg:top-[calc(var(--header-h)+(100dvh-var(--header-h)-clamp(12rem,20vw,22rem))/2)] lg:order-none lg:mt-[clamp(7rem,15vw,12rem)] lg:self-start lg:w-[clamp(12rem,20vw,22rem)]">
+          <div className="relative order-1 mx-auto aspect-square w-[min(100%,24rem)] lg:sticky lg:top-[calc(var(--header-h)+(100dvh-var(--header-h)-clamp(12rem,20vw,22rem))/2)] lg:order-none lg:self-start lg:w-[clamp(12rem,20vw,22rem)]">
             <div className="size-full [mask-image:radial-gradient(closest-side,#000_86%,transparent_100%)] lg:scale-[2]">
               <ProductArt
                 kind={product.kind}
@@ -172,6 +173,8 @@ export default async function ProductPage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        <CentreStickyColumns gridId="product-top-grid" />
 
         {/* Previous and next product: at the side edges on large screens, and
             beside the dots under the panel on smaller ones. */}
