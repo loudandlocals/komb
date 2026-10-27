@@ -98,14 +98,6 @@ export default async function ProductPage({ params }: Props) {
           {/* Details */}
           <div className="relative z-1 order-2 grid w-full max-w-md gap-4 max-lg:mx-auto lg:order-none lg:max-w-none xl:max-w-88">
             {product.step && <p className="eyebrow">{product.step} of the routine</p>}
-            <h1 id="product-title" className="text-[clamp(2rem,3.3vw,3rem)]">
-              {product.title}
-            </h1>
-            {product.titleFr && (
-              <p className="font-caslon text-[0.95rem] text-muted italic" lang="fr">
-                {product.titleFr}
-              </p>
-            )}
             {rating.count > 0 && (
               <a href="#reviews" className="flex w-fit items-center gap-2 text-[0.85rem] hover:text-label">
                 <Stars rating={rating.average} />
@@ -113,6 +105,14 @@ export default async function ProductPage({ params }: Props) {
                   {rating.average.toFixed(1)} ({rating.count} review{rating.count === 1 ? "" : "s"})
                 </span>
               </a>
+            )}
+            <h1 id="product-title" className="text-[clamp(2rem,3.3vw,3rem)]">
+              {product.title}
+            </h1>
+            {product.titleFr && (
+              <p className="font-caslon text-[0.95rem] text-muted italic" lang="fr">
+                {product.titleFr}
+              </p>
             )}
             <p className="text-[1.05rem] font-normal">
               {formatMoney(product.price)}
@@ -333,13 +333,14 @@ export default async function ProductPage({ params }: Props) {
                 What women <em>are saying</em>
               </h2>
             </div>
-            {rating.count > 0 && (
-              <p className="flex items-center gap-2 text-[0.9rem]">
-                <Stars rating={rating.average} />
-                {rating.average.toFixed(1)} from {rating.count} review{rating.count === 1 ? "" : "s"}
-              </p>
-            )}
+            <WriteReview products={[{ productId: product.productId, title: product.title }]} />
           </header>
+          {rating.count > 0 && (
+            <p className="flex items-center justify-center gap-2 text-[0.95rem]">
+              <Stars rating={rating.average} />
+              {rating.average.toFixed(1)} from {rating.count} review{rating.count === 1 ? "" : "s"}
+            </p>
+          )}
           {productReviews.length > 0 ? (
             <ReviewsList reviews={productReviews.slice(0, 6)} filters={false} />
           ) : (
@@ -350,9 +351,6 @@ export default async function ProductPage({ params }: Props) {
               Read all reviews
             </Link>
           )}
-          <div>
-            <WriteReview products={[{ productId: product.productId, title: product.title }]} />
-          </div>
         </section>
       )}
 
