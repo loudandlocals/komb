@@ -26,7 +26,11 @@ export function ProductArt({
         width={800}
         height={1000}
         sizes={sizes}
-        priority={priority}
+        // The product page's main photo: preloaded in the page head and fetched
+        // first, so it is ready as the panel appears.
+        preload={priority}
+        fetchPriority={priority ? "high" : undefined}
+        loading={priority ? "eager" : undefined}
         // Shopify images can be any shape, often a tight cut-out, so they are
         // fitted whole with some room around them. The site's own shots are
         // already framed on a square and fill their box.
