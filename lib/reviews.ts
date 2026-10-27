@@ -6,14 +6,21 @@
 // Real reviews must stay inside the claims rules as well: none can be shown
 // that say the products regrow hair or stop shedding.
 export type Review = {
+  id?: string;
   name: string;
-  handle: "botanical-hair-serum" | "renewal-hair-moisturizer";
-  rating: 1 | 2 | 3 | 4 | 5;
+  handle: string;
+  rating: number;
   title: string;
   body: string;
+  // ISO date, for real reviews.
+  date?: string;
+  // Judge.me marks reviews from confirmed buyers.
+  verified?: boolean;
+  // True for the layout placeholders below.
+  sample?: boolean;
 };
 
-export const PLACEHOLDER_REVIEWS: Review[] = [
+export const PLACEHOLDER_REVIEWS: Review[] = ([
   {
     name: "Sample reviewer A.",
     handle: "botanical-hair-serum",
@@ -56,4 +63,4 @@ export const PLACEHOLDER_REVIEWS: Review[] = [
     title: "Great on dry days",
     body: "Sample text. I use it on dry hair between washes to smooth flyaways. A little goes a long way.",
   },
-];
+] as Review[]).map((r) => ({ ...r, sample: true }));

@@ -9,7 +9,7 @@ const FILTERS = [
   { value: "renewal-hair-moisturizer", label: "Renewal Hair Moisturizer" },
 ] as const;
 
-const TITLES: Record<Review["handle"], string> = {
+const TITLES: Record<string, string> = {
   "botanical-hair-serum": "Botanical Hair Serum",
   "renewal-hair-moisturizer": "Renewal Hair Moisturizer",
 };
@@ -32,12 +32,13 @@ export function Stars({ rating, className = "" }: { rating: number; className?: 
 }
 
 // Review cards with a product filter, in a loose masonry of columns.
-export function ReviewsList({ reviews }: { reviews: Review[] }) {
+export function ReviewsList({ reviews, filters = true }: { reviews: Review[]; filters?: boolean }) {
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["value"]>("all");
   const shown = filter === "all" ? reviews : reviews.filter((r) => r.handle === filter);
 
   return (
     <div className="grid gap-8">
+      {filters && (
       <div role="group" aria-label="Filter reviews by product" className="flex flex-wrap gap-2">
         {FILTERS.map((f) => (
           <button
@@ -53,26 +54,39 @@ export function ReviewsList({ reviews }: { reviews: Review[] }) {
           </button>
         ))}
       </div>
+      )}
       <p className="sr-only" aria-live="polite">
         {shown.length} reviews shown
       </p>
       <ul className="gap-6 sm:columns-2 lg:columns-3">
         {shown.map((review) => (
           <li
-            key={review.name + review.title}
+            key={review.id ?? review.name + review.title}
             className="mb-6 grid break-inside-avoid gap-3 border border-line bg-offwhite p-6"
           >
             <div className="flex items-center justify-between gap-4">
               <Stars rating={review.rating} />
-              <span className="border border-gold-light px-2 py-0.5 text-[0.62rem] font-medium tracking-[0.16em] text-label uppercase">
-                Sample
-              </span>
+              {review.sample ? (
+                <span className="border border-gold-light px-2 py-0.5 text-[0.62rem] font-medium tracking-[0.16em] text-label uppercase">
+                  Sample
+                </span>
+              ) : review.verified ? (
+                <span className="text-[0.62rem] font-medium tracking-[0.16em] text-label uppercase">
+                  Verified buyer
+                </span>
+              ) : null}
             </div>
             <h3 className="text-[1.15rem] italic">{review.title}</h3>
             <p className="text-[0.92rem] text-muted">{review.body}</p>
             <p className="text-[0.78rem]">
               <span className="font-medium">{review.name}</span>
-              <span className="text-muted"> · {TITLES[review.handle]}</span>
+              {TITLES[review.handle] && <span className="text-muted"> · {TITLES[review.handle]}</span>}
+              {review.date && (
+                <span className="text-muted">
+                  {" · "}
+                  {new Date(review.date).toLocaleDateString("en-CA", { year: "numeric", month: "short", day: "numeric" })}
+                </span>
+              )}
             </p>
           </li>
         ))}

@@ -6,6 +6,8 @@ export type Money = { amount: number; currencyCode: string };
 // Commerce fields come from Shopify (or the mock catalog); editorial fields
 // come from lib/catalog.ts and are matched to Shopify products by handle.
 export type Product = {
+  // Shopify's numeric product ID; absent with mock data.
+  productId?: string;
   handle: string;
   title: string;
   variantId: string;

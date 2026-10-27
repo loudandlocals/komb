@@ -51,6 +51,7 @@ async function storefront<T>(
 
 const PRODUCT_FIELDS = /* GraphQL */ `
   fragment ProductFields on Product {
+    id
     handle
     title
     description
@@ -64,6 +65,7 @@ const PRODUCT_FIELDS = /* GraphQL */ `
 `;
 
 type ShopifyProduct = {
+  id: string;
   handle: string;
   title: string;
   description: string;
@@ -97,6 +99,8 @@ function toProduct(p: ShopifyProduct): Product | null {
     currencyCode: variant.price.currencyCode,
   };
   return {
+    // Numeric Shopify product ID, which Judge.me uses to file reviews.
+    productId: p.id.split("/").pop(),
     handle: p.handle,
     title: p.title,
     variantId: variant.id,

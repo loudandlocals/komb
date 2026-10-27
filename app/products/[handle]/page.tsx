@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BuyNowButton } from "@/components/BuyButtons";
 import { Faq } from "@/components/Faq";
+import { ReviewForm } from "@/components/ReviewForm";
+import { ReviewsList, Stars } from "@/components/ReviewsList";
 import { JsonLd } from "@/components/JsonLd";
 import { OpenHashDetails } from "@/components/OpenHashDetails";
 import { IngredientStrip } from "@/components/IngredientStrip";
@@ -17,6 +19,7 @@ import { PRODUCT_FAQ } from "@/lib/faq";
 import { ingredientsFor } from "@/lib/ingredients";
 import { formatMoney } from "@/lib/format";
 import { visitorCountry } from "@/lib/market";
+import { getReviews, summarise } from "@/lib/judgeme";
 import { getProduct, getProducts } from "@/lib/shopify";
 import { SITE } from "@/lib/site";
 
@@ -60,6 +63,10 @@ export default async function ProductPage({ params }: Props) {
   const url = `${SITE.url}/products/${product.handle}`;
 
   const faq = PRODUCT_FAQ[product.handle];
+  // Real Judge.me reviews only; the sample reviews never appear on product pages.
+  const { reviews: allReviews, live: reviewsLive } = await getReviews();
+  const productReviews = reviewsLive ? allReviews.filter((r) => r.handle === product.handle) : [];
+  const rating = summarise(productReviews);
   const featured = ingredientsFor(product.handle);
 
   // Previous and next product, wrapping around the catalogue.
@@ -98,6 +105,14 @@ export default async function ProductPage({ params }: Props) {
               <p className="font-caslon text-[0.95rem] text-muted italic" lang="fr">
                 {product.titleFr}
               </p>
+            )}
+            {rating.count > 0 && (
+              <a href="#reviews" className="flex w-fit items-center gap-2 text-[0.85rem] hover:text-label">
+                <Stars rating={rating.average} />
+                <span>
+                  {rating.average.toFixed(1)} ({rating.count} review{rating.count === 1 ? "" : "s"})
+                </span>
+              </a>
             )}
             <p className="text-[1.05rem] font-normal">
               {formatMoney(product.price)}
@@ -305,6 +320,45 @@ export default async function ProductPage({ params }: Props) {
         </section>
       )}
 
+      {reviewsLive && (
+        <section
+          id="reviews"
+          aria-labelledby="reviews-title"
+          className="container-site grid scroll-mt-[calc(var(--header-h)+1rem)] gap-10 pt-section"
+        >
+          <header className="flex flex-wrap items-end justify-between gap-4">
+            <div className="grid gap-3">
+              <p className="eyebrow">Reviews</p>
+              <h2 id="reviews-title">
+                What women <em>are saying</em>
+              </h2>
+            </div>
+            {rating.count > 0 && (
+              <p className="flex items-center gap-2 text-[0.9rem]">
+                <Stars rating={rating.average} />
+                {rating.average.toFixed(1)} from {rating.count} review{rating.count === 1 ? "" : "s"}
+              </p>
+            )}
+          </header>
+          {productReviews.length > 0 ? (
+            <ReviewsList reviews={productReviews.slice(0, 6)} filters={false} />
+          ) : (
+            <p className="text-muted">No reviews yet. Be the first to share yours.</p>
+          )}
+          {productReviews.length > 6 && (
+            <Link href="/reviews" className="text-link w-fit">
+              Read all reviews
+            </Link>
+          )}
+          <details className="accordion border-y border-line">
+            <summary>Write a review</summary>
+            <div className="pb-8">
+              <ReviewForm products={[{ productId: product.productId, title: product.title }]} />
+            </div>
+          </details>
+        </section>
+      )}
+
       {faq && (
         <Faq
           id="faq-title"
@@ -325,6 +379,13 @@ export default async function ProductPage({ params }: Props) {
           description: product.summary,
           url,
           brand: { "@type": "Brand", name: SITE.name },
+          ...(rating.count > 0 && {
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: rating.average.toFixed(1),
+              reviewCount: rating.count,
+            },
+          }),
           category: "Hair care",
           ...(product.sku && { sku: product.sku }),
           ...(product.gtin12 && { gtin12: product.gtin12 }),
