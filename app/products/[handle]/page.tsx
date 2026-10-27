@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BuyNowButton } from "@/components/BuyButtons";
 import { Faq } from "@/components/Faq";
-import { ReviewForm } from "@/components/ReviewForm";
+import { WriteReview } from "@/components/WriteReview";
 import { ReviewsList, Stars } from "@/components/ReviewsList";
 import { JsonLd } from "@/components/JsonLd";
 import { OpenHashDetails } from "@/components/OpenHashDetails";
@@ -350,12 +350,9 @@ export default async function ProductPage({ params }: Props) {
               Read all reviews
             </Link>
           )}
-          <details className="accordion border-y border-line">
-            <summary>Write a review</summary>
-            <div className="pb-8">
-              <ReviewForm products={[{ productId: product.productId, title: product.title }]} />
-            </div>
-          </details>
+          <div>
+            <WriteReview products={[{ productId: product.productId, title: product.title }]} />
+          </div>
         </section>
       )}
 

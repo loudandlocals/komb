@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ReviewForm } from "@/components/ReviewForm";
+import { WriteReview } from "@/components/WriteReview";
 import { ReviewsList, Stars } from "@/components/ReviewsList";
 import { getReviews, isJudgeMeConfigured, summarise } from "@/lib/judgeme";
 import { getProducts } from "@/lib/shopify";
@@ -21,6 +21,7 @@ export const revalidate = 600;
 export default async function ReviewsPage() {
   const [{ reviews, live }, products] = await Promise.all([getReviews(), getProducts()]);
   const { count, average } = summarise(reviews);
+  const reviewProducts = products.map((p) => ({ productId: p.productId, title: p.title }));
   const counts = [5, 4, 3, 2, 1].map((star) => ({
     star,
     count: reviews.filter((r) => Math.round(r.rating) === star).length,
@@ -67,9 +68,9 @@ export default async function ReviewsPage() {
             </li>
           ))}
         </ul>
-        <a href="#write-review" className="btn btn-primary justify-self-center">
-          Write a review
-        </a>
+        <div className="justify-self-center">
+          <WriteReview products={reviewProducts} />
+        </div>
       </section>
 
       {count > 0 ? (
@@ -78,12 +79,6 @@ export default async function ReviewsPage() {
         <p className="mb-14 text-center text-muted">Be the first to share how the routine fits into your week.</p>
       )}
 
-      <section id="write-review" aria-labelledby="write-review-title" className="mt-section grid scroll-mt-[calc(var(--header-h)+1rem)] justify-items-start gap-6">
-        <h2 id="write-review-title" className="text-[clamp(1.8rem,3vw,2.4rem)]">
-          Write a <em>review</em>
-        </h2>
-        <ReviewForm products={products.map((p) => ({ productId: p.productId, title: p.title }))} />
-      </section>
     </div>
   );
 }
