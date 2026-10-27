@@ -12,6 +12,9 @@ const SEEN_KEY = "komb-signup-popup";
 const KLAVIYO_COMPANY_ID = process.env.NEXT_PUBLIC_KLAVIYO_COMPANY_ID;
 const KLAVIYO_FORM_ID = process.env.NEXT_PUBLIC_KLAVIYO_POPUP_FORM_ID || "Vh4T9x";
 const DELAY_MS = 15_000;
+// TEMPORARY, for previewing the design: the pop-up opens straight away on
+// every page load and ignores "already seen". Set back to false before launch.
+const PREVIEW_ALWAYS = true;
 
 // "Subscribe for 15% off your first order", offered once, 15 seconds into a
 // visit. Closing it or signing up means it does not come back. It never opens
@@ -28,12 +31,12 @@ export function SignupPopup() {
     try {
       seen = localStorage.getItem(SEEN_KEY) === "1";
     } catch {}
-    if (seen) return;
+    if (seen && !PREVIEW_ALWAYS) return;
     const timer = window.setTimeout(() => {
       if (/^\/(checkout|account)/.test(window.location.pathname)) return;
       if (document.querySelector("dialog[open]")) return;
       setOpen(true);
-    }, DELAY_MS);
+    }, PREVIEW_ALWAYS ? 800 : DELAY_MS);
     return () => window.clearTimeout(timer);
     // Started once per visit; navigating between pages does not restart it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
