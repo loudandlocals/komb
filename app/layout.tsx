@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Cormorant_Garamond, Libre_Caslon_Text, Roboto } from "next/font/google";
 import { CartDrawer } from "@/components/CartDrawer";
 import { CartProvider } from "@/components/CartProvider";
@@ -85,6 +86,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </CartProvider>
         <ScrollReveal />
         <SignupPopup />
+        {/* Klaviyo's onsite script: draws the Klaviyo form in the sign-up
+            pop-up. Loaded after the page, and only once Klaviyo is set up. */}
+        {process.env.NEXT_PUBLIC_KLAVIYO_COMPANY_ID && (
+          <Script
+            src={`https://static.klaviyo.com/onsite/js/${process.env.NEXT_PUBLIC_KLAVIYO_COMPANY_ID}/klaviyo.js?company_id=${process.env.NEXT_PUBLIC_KLAVIYO_COMPANY_ID}`}
+            strategy="lazyOnload"
+          />
+        )}
         <JsonLd
           data={{
             "@context": "https://schema.org",

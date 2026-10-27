@@ -6,6 +6,11 @@ import { useEffect, useRef, useState } from "react";
 import { NewsletterForm } from "./NewsletterForm";
 
 const SEEN_KEY = "komb-signup-popup";
+// The Klaviyo sign-up form shown in the pop-up once Klaviyo is connected
+// (NEXT_PUBLIC_KLAVIYO_COMPANY_ID set). Klaviyo draws the form, so its fields,
+// wording and styling are edited in Klaviyo. It must be an "Embed" form.
+const KLAVIYO_COMPANY_ID = process.env.NEXT_PUBLIC_KLAVIYO_COMPANY_ID;
+const KLAVIYO_FORM_ID = process.env.NEXT_PUBLIC_KLAVIYO_POPUP_FORM_ID || "Vh4T9x";
 const DELAY_MS = 15_000;
 
 // "Subscribe for 15% off your first order", offered once, 15 seconds into a
@@ -47,6 +52,17 @@ export function SignupPopup() {
     } catch {}
   };
 
+  // A sign-up through the Klaviyo form also means the pop-up is not shown again.
+  useEffect(() => {
+    if (!KLAVIYO_COMPANY_ID) return;
+    const onKlaviyo = (e: Event) => {
+      const detail = (e as CustomEvent<{ type?: string; formId?: string }>).detail;
+      if (detail?.type === "submit" && detail.formId === KLAVIYO_FORM_ID) remember();
+    };
+    window.addEventListener("klaviyoForms", onKlaviyo);
+    return () => window.removeEventListener("klaviyoForms", onKlaviyo);
+  }, []);
+
   const close = () => {
     remember();
     setOpen(false);
@@ -83,20 +99,32 @@ export function SignupPopup() {
         >
           <span aria-hidden>×</span>
         </button>
-        <p className="text-[0.68rem] font-medium tracking-[0.22em] text-gold-light uppercase">
-          Welcome to Komb
-        </p>
-        <h2
-          id="signup-popup-title"
-          className="font-caslon text-[clamp(1.7rem,4vw,2.3rem)] leading-tight tracking-[-0.02em] text-offwhite italic"
-        >
-          Subscribe for 15% off <span className="text-gold-light">your first order</span>
-        </h2>
-        <p className="text-[0.95rem] text-offwhite/85">
-          Join our emails for notes on scalp care, new arrivals and routine tips.
-          Your code arrives in your welcome email.
-        </p>
-        <NewsletterForm onSubscribed={remember} />
+        {KLAVIYO_COMPANY_ID ? (
+          <>
+            <h2 id="signup-popup-title" className="sr-only">
+              Subscribe for 15% off your first order
+            </h2>
+            {/* Klaviyo fills this in with the form designed in Klaviyo. */}
+            <div className={`klaviyo-form-${KLAVIYO_FORM_ID} min-h-60`} />
+          </>
+        ) : (
+          <>
+            <p className="text-[0.68rem] font-medium tracking-[0.22em] text-gold-light uppercase">
+              Welcome to Komb
+            </p>
+            <h2
+              id="signup-popup-title"
+              className="font-caslon text-[clamp(1.7rem,4vw,2.3rem)] leading-tight tracking-[-0.02em] text-offwhite italic"
+            >
+              Subscribe for 15% off <span className="text-gold-light">your first order</span>
+            </h2>
+            <p className="text-[0.95rem] text-offwhite/85">
+              Join our emails for notes on scalp care, new arrivals and routine tips.
+              Your code arrives in your welcome email.
+            </p>
+            <NewsletterForm onSubscribed={remember} />
+          </>
+        )}
         <button
           type="button"
           onClick={close}
