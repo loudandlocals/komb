@@ -20,68 +20,77 @@ const STEPS = [
   { title: "Earn", body: "Earn 10% of eligible product sales from your link or code." },
 ];
 
-// The client's affiliate terms, verbatim.
+// The affiliate program terms, matching the copy set in the affiliate app.
 const TERMS_INTRO = [
-  "Welcome to KOMB! Thanks for joining our Affiliate program.",
-  "These following terms and conditions apply to individuals who are accessing or using the Program both as a merchant (“we” or “merchant”) and an affiliate (“you” or “affiliate”) who refers customers to use product or service from the merchant.",
-  "By participating in the Program, Affiliate agrees to use the Program in the manner specified in, and are bound by, these Terms and Conditions. If you do not agree to these Terms and Conditions in their entirety you are not authorized to register as an Affiliate or participate in the Program in any manner.",
+  "Welcome to KOMB! Thank you for joining our Affiliate Program.",
+  "These terms and conditions apply to everyone who takes part in the Komb Hair Affiliate Program (the “Program”). In these terms, “we”, “us” and “merchant” mean Komb Hair Inc., and “you” and “affiliate” mean a person who refers customers to buy our products.",
+  "By taking part in the Program, you agree to use it as described in these terms and to be bound by them. If you do not agree to all of these terms, you may not register as an affiliate or take part in the Program.",
 ];
 
 const TERMS = [
   {
-    title: "1. Approve or Reject of the Registration",
+    title: "1. Approval of registrations",
     body: [
-      "We reserve the right to approve or reject ANY Affiliate Program Registration in our sole and absolute discretion. You will have no legal recourse against us for the rejection of your Affiliate Program Registration.",
+      "We may approve or reject any affiliate registration at our sole discretion. You will have no legal recourse against us if your registration is rejected.",
     ],
   },
   {
-    title: "2. Affiliate Links and Coupon",
+    title: "2. Affiliate links and coupon codes",
     body: [
-      "Affiliate link is automatically generated, but you can also generate an affiliate link for a specific product or collection. If a person clicks on someone else’s referral link and then later they click on yours, yours is the one that counts.",
-      "Affiliate might or might not be assigned to one coupon code with details and usage clarified on Dashboard. If customer both click on the affiliate link and use coupon code, you will not receive a double commission. If you’re not assigned a branded coupon, then you’re not allowed to promote the coupon.",
-      "Affiliate may also advertise merchant website on online channels such as Facebook, Instagram,... or offline classified channel ads, magazines, and newspapers.",
+      "Your affiliate link is generated automatically. You can also create a link for a specific product or collection. If a customer clicks someone else’s affiliate link and later clicks yours, your link gets the credit.",
+      "You may be assigned a coupon code. Its details and how it can be used are shown on your Dashboard. If a customer uses both your link and your coupon code, you earn one commission, not two. If you have not been assigned a branded coupon code, you may not promote one.",
+      "You may promote the Komb website online, for example on Facebook and Instagram, and offline, for example in classified ads, magazines and newspapers.",
     ],
   },
   {
-    title: "3. Commissions and payment",
+    title: "3. Commission and payment",
     body: [
-      "Refer any customer to make a purchase on our website, you will get a commission amount which is calculated based on Commission structure. Commission amount is dependent on order value and not including extra fee (tax, shipping cost,...).",
-      "For an Affiliate to receive a commission, you need to specify the payment details on Settings. Payment schedule will be notified on Affiliate Guide page.",
-      "Payments will only be sent for transactions that have been successfully completed. Use of the Affiliate Program is subject to a fair use policy which gives merchant the right to review each and every referral order. Status of commission if displayed in Commission tab, any paid commission will be listed on Payment tab. Transactions that result in charge backs or refunds will not be paid out.",
+      "You earn a 10% commission on eligible purchases made on our website by customers you refer. Commission is calculated on the order value and does not include taxes, shipping or other fees.",
+      "To receive commission, add your payment details in Settings. The payment schedule is shown on the Affiliate Guide page.",
+      "Commission is paid only on completed orders. The Program is subject to a fair use policy, and we may review any referred order. You can see the status of your commission in the Commission tab and your paid commission in the Payment tab. Orders that are refunded or charged back do not earn commission.",
     ],
   },
   {
-    title: "4. Marketing tool",
+    title: "4. Marketing materials",
     body: [
-      "We may share promotion media such as banner, logo or specific collection promotion to you through Marketing tool tab. You can download the media or get the HTML embed code in order to share on affiliate channels.",
+      "We may share promotional materials, such as banners, logos and collection images, in the Marketing Tool tab. You can download them or copy the HTML embed code to share on your channels.",
     ],
   },
   {
     title: "5. Network",
     body: [
-      "If Network tab is activated, affiliate can invite others to become their downline affiliate. If any downline affiliate brings order to merchant shop, upline affiliate will also get network commission which depends on merchant settings.",
-      "To invite other affiliates into the system, share network link and any other affiliate who click on that link and sign up will become a downline affiliate.",
+      "If the Network tab is turned on, you can invite others to join as affiliates under you by sharing your network link. Anyone who signs up through it becomes your downline affiliate, and you earn a network commission on orders they refer, as set by us.",
     ],
   },
   {
-    title: "6. Cookie",
+    title: "6. Cookies and tracking",
     body: [
-      "We use a cookie to track people who have clicked on your link, so they need to be using cookies for us to track them.",
-      "If a person doesn't allow cookies or clears their cookies then we can't track them so can't pay earnings on that person's activity.",
-      "Cookies day is said on the Affiliate registration form. The tracking day will start from the time a customer clicks on the affiliate’s link or use the coupon. Within the cookie time, every order made by this customer at merchant website will automatically result in commissions to the affiliate (There’s no need for the customer to click on the affiliate link then).",
+      "We use a cookie to track people who click your link, so we can only track customers whose browsers accept cookies. If a customer blocks or clears cookies, we cannot track them or pay commission on their orders.",
+      "The tracking period is shown on the affiliate registration form. It starts when a customer clicks your link or uses your coupon code. During that period, every order the customer places on our website earns you commission, even if they do not click your link again.",
     ],
   },
   {
-    title: "7. Removal from Referral Program",
+    title: "7. Product claims",
     body: [
-      "If an affiliate wishes to be removed from the affiliate program, they can do so by contacting: info@komb.ca.",
+      "Komb products are cosmetics. When promoting them, do not say they treat, prevent, stop or reverse hair loss, or that they regrow hair. You may describe them as scalp and hair care for healthier-looking hair.",
+    ],
+  },
+  {
+    title: "8. Leaving the Program",
+    body: [
+      "To leave the Program, email us at info@komb.ca. We may remove an affiliate who breaks these terms.",
+    ],
+  },
+  {
+    title: "9. Changes to these terms",
+    body: [
+      "We may update these terms from time to time. The current version is always available on our website.",
     ],
   },
   {
     title: "Go forward and refer!",
     body: [
-      "We're very glad you've made it to the end of this important document.",
-      "We wish you all the very best. You can always re-visit these Affiliate Program terms and conditions in the future and if you have any questions you can send email to info@komb.ca for support.",
+      "Thank you for reading to the end. We wish you all the best. You can come back to these terms at any time, and if you have any questions, email us at info@komb.ca.",
     ],
   },
 ];
@@ -145,8 +154,7 @@ export default function AffiliatesPage() {
           </div>
         ))}
         <p className="mt-2 border-t border-line pt-5 text-[0.9rem] text-muted">
-          Komb products are cosmetics, so please do not say they treat, stop or reverse hair
-          loss. Questions? Email{" "}
+          Questions? Email{" "}
           <a href={`mailto:${SITE.email}`} className="underline underline-offset-4 hover:text-label">
             {SITE.email}
           </a>
