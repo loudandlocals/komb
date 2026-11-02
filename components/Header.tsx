@@ -11,8 +11,8 @@ const NAV = [
   { href: "/shop", label: "Shop" },
   { href: "/our-story", label: "Our Story" },
   { href: "/reviews", label: "Reviews" },
-  { href: "/contact", label: "Contact" },
   { href: "/affiliates", label: "Affiliates" },
+  { href: "/contact", label: "Contact" },
 ];
 
 const navText = "text-[0.74rem] whitespace-nowrap uppercase tracking-[0.16em] lg:max-xl:tracking-[0.1em]";
