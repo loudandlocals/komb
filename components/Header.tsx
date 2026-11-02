@@ -9,12 +9,10 @@ import { Logo } from "./Logo";
 
 const NAV = [
   { href: "/shop", label: "Shop" },
-  { href: "/#routine", label: "The Routine" },
   { href: "/our-story", label: "Our Story" },
   { href: "/reviews", label: "Reviews" },
   { href: "/contact", label: "Contact" },
-  // Mobile menu only: the desktop row has no room for it beside the logo.
-  { href: "/affiliates", label: "Affiliates", mobileOnly: true },
+  { href: "/affiliates", label: "Affiliates" },
 ];
 
 const navText = "text-[0.74rem] whitespace-nowrap uppercase tracking-[0.16em] lg:max-xl:tracking-[0.1em]";
@@ -86,7 +84,7 @@ export function Header() {
               key={item.href}
               href={item.href}
               onClick={() => setMenuOpen(false)}
-              className={`${navText} border-b border-line py-3.5 underline-offset-8 hover:underline lg:border-0 lg:py-2 ${item.mobileOnly ? "lg:hidden" : ""}`}
+              className={`${navText} border-b border-line py-3.5 underline-offset-8 hover:underline lg:border-0 lg:py-2`}
             >
               {item.label}
             </Link>
