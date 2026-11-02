@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { SITE } from "@/lib/site";
 
 // The application form lives with the affiliate app chosen by the client
@@ -119,23 +120,35 @@ export default function AffiliatesPage() {
 
   return (
     <div className="container-site pt-[clamp(3rem,6vw,5rem)] pb-section">
-      <header className="mb-[clamp(2.5rem,5vw,4rem)] grid max-w-208 justify-items-start gap-4">
-        <p className="eyebrow">Affiliates</p>
-        <h1>
-          Share what you love, <em>earn with us</em>
-        </h1>
-        <p className="max-w-xl text-muted">
-          Join the Komb Hair affiliate program. Earn 10% on the sales you refer, and give
-          your audience 10% off their order.
-        </p>
-        <a href={apply} className="btn btn-primary mt-2">
-          Apply to join
-        </a>
-        {!SIGNUP_URL && (
-          <p className="text-[0.85rem] text-muted">
-            Applications open soon. In the meantime, the button emails us at {SITE.email}.
+      <header className="mb-section grid items-center gap-[clamp(2rem,6vw,6rem)] md:grid-cols-[6fr_5fr]">
+        <div className="grid max-w-xl justify-items-start gap-4">
+          <p className="eyebrow">Affiliates</p>
+          <h1>
+            Share what you love, <em>earn with us</em>
+          </h1>
+          <p className="max-w-xl text-muted">
+            Join the Komb Hair affiliate program. Earn 10% on the sales you refer, and give
+            your audience 10% off their order.
           </p>
-        )}
+          <a href={apply} className="btn btn-primary mt-2">
+            Apply to join
+          </a>
+          {!SIGNUP_URL && (
+            <p className="text-[0.85rem] text-muted">
+              Applications open soon. In the meantime, the button emails us at {SITE.email}.
+            </p>
+          )}
+        </div>
+        <div className="arch relative mx-auto max-w-96 md:max-w-none" data-reveal="image">
+          <Image
+            src="/images/affiliates.jpg"
+            alt="Woman with long, healthy-looking hair holding Komb Botanical Hair Serum and Renewal Hair Moisturizer"
+            fill
+            priority
+            sizes="(min-width: 768px) 40vw, 24rem"
+            className="object-cover object-[50%_30%]"
+          />
+        </div>
       </header>
 
       <section aria-labelledby="how-title" className="mb-section">
