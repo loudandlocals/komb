@@ -4,7 +4,7 @@ import { SITE } from "@/lib/site";
 // The application form lives with the affiliate app chosen by the client
 // (for example UpPromote, GoAffPro or Shopify Collabs). Set its address in
 // NEXT_PUBLIC_AFFILIATE_SIGNUP_URL; until then the button emails us instead.
-const SIGNUP_URL = process.env.NEXT_PUBLIC_AFFILIATE_SIGNUP_URL;
+const SIGNUP_URL = process.env.NEXT_PUBLIC_AFFILIATE_SIGNUP_URL || undefined;
 
 export const metadata: Metadata = {
   title: "Affiliates",
