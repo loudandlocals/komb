@@ -108,7 +108,7 @@ export function SignupPopup() {
               Subscribe for 15% off your first order
             </h2>
             {/* Klaviyo fills this in with the form designed in Klaviyo. */}
-            <div className={`klaviyo-form-${KLAVIYO_FORM_ID} min-h-60`} />
+            <div className={`signup-klaviyo klaviyo-form-${KLAVIYO_FORM_ID} min-h-60`} />
           </>
         ) : (
           <>

@@ -279,6 +279,100 @@
   background: rgb(39 37 34 / 0.4);
 }
 
+/* The Klaviyo form inside the sign-up pop-up. Klaviyo styles it inline for a
+   white page, so it is restyled here to match the built-in form on the
+   pop-up's umber panel. */
+.signup-klaviyo form.klaviyo-form,
+.signup-klaviyo form.klaviyo-form div {
+  background: transparent !important;
+  padding-inline: 0 !important;
+  max-width: none !important;
+}
+
+.signup-klaviyo .klaviyo-form-richtext h1 {
+  margin-bottom: 0.5rem !important;
+}
+
+.signup-klaviyo .klaviyo-form-richtext,
+.signup-klaviyo .klaviyo-form-richtext * {
+  color: var(--color-offwhite) !important;
+  text-align: left !important;
+}
+
+.signup-klaviyo .klaviyo-form-richtext h1,
+.signup-klaviyo .klaviyo-form-richtext h1 * {
+  font-family: var(--font-caslon) !important;
+  font-size: clamp(1.7rem, 4vw, 2.3rem) !important;
+  font-weight: 400 !important;
+  font-style: italic !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.signup-klaviyo .klaviyo-form-richtext p,
+.signup-klaviyo .klaviyo-form-richtext p * {
+  font-family: var(--font-sans) !important;
+  font-size: 0.95rem !important;
+  line-height: 1.6 !important;
+  color: rgb(247 242 233 / 0.85) !important;
+}
+
+/* The consent line: the last block of text, set small like the built-in one. */
+.signup-klaviyo form.klaviyo-form > div > div:nth-last-child(2) .klaviyo-form-richtext p,
+.signup-klaviyo form.klaviyo-form > div > div:nth-last-child(2) .klaviyo-form-richtext p * {
+  font-size: 0.74rem !important;
+  line-height: 1.6 !important;
+  color: rgb(247 242 233 / 0.7) !important;
+}
+
+.signup-klaviyo .klaviyo-form-richtext a {
+  color: var(--color-gold-light) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+}
+
+.signup-klaviyo input[type="email"],
+.signup-klaviyo .klaviyo-emailinput input {
+  height: 3rem !important;
+  border: 1px solid rgb(247 242 233 / 0.45) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--color-offwhite) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 0.95rem !important;
+}
+
+.signup-klaviyo input[type="email"]::placeholder {
+  color: rgb(247 242 233 / 0.6) !important;
+}
+
+.signup-klaviyo input[type="email"]:focus {
+  border-color: var(--color-gold-light) !important;
+  outline: 2px solid var(--color-gold-light) !important;
+  outline-offset: 2px;
+}
+
+.signup-klaviyo button {
+  height: 3rem !important;
+  border-radius: 0 !important;
+  background: var(--color-gold-light) !important;
+  color: var(--color-ink) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 0.74rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase;
+}
+
+.signup-klaviyo button:hover {
+  background: var(--color-offwhite) !important;
+}
+
+.signup-klaviyo button:focus-visible {
+  outline: 2px solid var(--color-gold-light) !important;
+  outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
