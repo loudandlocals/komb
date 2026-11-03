@@ -26,7 +26,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    return NextResponse.json({ url: await createCheckoutUrl(lines, await visitorCountry()) });
+    const cart = await createCheckoutUrl(lines, await visitorCountry());
+    return NextResponse.json({ url: cart.checkoutUrl, cartId: cart.id });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

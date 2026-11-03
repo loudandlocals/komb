@@ -119,6 +119,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         });
         const data = await res.json();
         if (data.url) {
+          // Tell UpPromote which cart this visitor checks out with, so an
+          // order from an affiliate link is credited. The pixel only exists
+          // when NEXT_PUBLIC_UPPROMOTE_SHOP is set; give it a moment to send.
+          const upTag = (window as unknown as { upTag?: (...args: unknown[]) => void }).upTag;
+          if (data.cartId && typeof upTag === "function") {
+            try {
+              upTag("event", "cart_updated", { id: data.cartId });
+            } catch {}
+            await new Promise((resolve) => setTimeout(resolve, 400));
+          }
           window.location.assign(data.url);
           return;
         }

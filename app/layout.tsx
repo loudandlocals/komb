@@ -86,6 +86,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </CartProvider>
         <ScrollReveal />
         <SignupPopup />
+        {/* UpPromote's tracking pixel: records affiliate link visits so the
+            order is credited at checkout (custom storefronts can't use the
+            app's theme embed). Set NEXT_PUBLIC_UPPROMOTE_SHOP to the store's
+            myshopify.com domain, matching the script shown in UpPromote >
+            Settings > Integration > Third-party stores. */}
+        {process.env.NEXT_PUBLIC_UPPROMOTE_SHOP && (
+          <Script
+            src={`https://pixel.uppromote.com/collect/v1/collect?shop=${process.env.NEXT_PUBLIC_UPPROMOTE_SHOP}`}
+            strategy="afterInteractive"
+          />
+        )}
         {/* Klaviyo's onsite script: draws the Klaviyo form in the sign-up
             pop-up. Loaded after the page, and only once Klaviyo is set up. */}
         {process.env.NEXT_PUBLIC_KLAVIYO_COMPANY_ID && (
