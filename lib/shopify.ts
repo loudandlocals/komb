@@ -156,22 +156,23 @@ export async function getProduct(handle: string, country?: string): Promise<Prod
   return data.product ? toProduct(data.product) : null;
 }
 
-// Creates a Shopify cart for the given lines and returns its hosted checkout
-// URL. The buyer's country sets the market, so checkout charges in their
-// currency.
+// Creates a Shopify cart for the given lines and returns its id and hosted
+// checkout URL. The buyer's country sets the market, so checkout charges in
+// their currency. The cart id lets the affiliate app tie the order to a
+// referral.
 export async function createCheckoutUrl(
   lines: CheckoutLine[],
   country?: string
-): Promise<string> {
+): Promise<{ id: string; checkoutUrl: string }> {
   const data = await storefront<{
     cartCreate: {
-      cart: { checkoutUrl: string } | null;
+      cart: { id: string; checkoutUrl: string } | null;
       userErrors: { message: string }[];
     };
   }>(
     `mutation CartCreate($lines: [CartLineInput!]!, $buyerIdentity: CartBuyerIdentityInput) {
        cartCreate(input: { lines: $lines, buyerIdentity: $buyerIdentity }) {
-         cart { checkoutUrl }
+         cart { id checkoutUrl }
          userErrors { message }
        }
      }`,
@@ -187,5 +188,5 @@ export async function createCheckoutUrl(
   );
   const { cart, userErrors } = data.cartCreate;
   if (!cart) throw new Error(userErrors[0]?.message ?? "Could not create cart");
-  return cart.checkoutUrl;
+  return cart;
 }
