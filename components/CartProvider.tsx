@@ -59,7 +59,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) setItems(JSON.parse(saved));
+      // A cart saved by an older version of the site, or before the store was
+      // connected, can hold lines without a usable price. Drop those rather
+      // than showing them at $0; checkout always charges Shopify's price.
+      if (saved)
+        setItems(
+          (JSON.parse(saved) as CartItem[]).filter(
+            (i) => i?.variantId && Number(i.price?.amount) > 0 && i.quantity > 0
+          )
+        );
     } catch {}
     setLoaded(true);
   }, []);
