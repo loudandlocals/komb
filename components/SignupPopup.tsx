@@ -12,6 +12,8 @@ const SEEN_KEY = "komb-signup-popup";
 const KLAVIYO_COMPANY_ID = process.env.NEXT_PUBLIC_KLAVIYO_COMPANY_ID;
 const KLAVIYO_FORM_ID = process.env.NEXT_PUBLIC_KLAVIYO_POPUP_FORM_ID || "Vh4T9x";
 const DELAY_MS = 15_000;
+// Longest the pop-up waits for the Klaviyo form before using the built-in one.
+const KLAVIYO_WAIT_MS = 8_000;
 // TEMPORARY, for previewing the design: the pop-up opens straight away on
 // every page load and ignores "already seen". Set back to false before launch.
 const PREVIEW_ALWAYS = true;
@@ -26,10 +28,11 @@ export function SignupPopup() {
   const dialog = useRef<HTMLDialogElement>(null);
   const klaviyoSlot = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
-  // Klaviyo leaves its form out for some visitors (for example a profile it
-  // already knows, depending on the form's targeting). If nothing has been
-  // drawn a few seconds after the pop-up opens, show the built-in form instead
-  // of an empty panel.
+  // Klaviyo draws its form into the (still closed) pop-up, so the pop-up waits
+  // until the form is there before opening. Klaviyo leaves the form out for
+  // some visitors (for example a profile it already knows, depending on the
+  // form's targeting); after KLAVIYO_WAIT_MS the pop-up opens with the
+  // built-in form instead, never with an empty panel.
   const [klaviyoMissing, setKlaviyoMissing] = useState(false);
 
   useEffect(() => {
@@ -38,12 +41,27 @@ export function SignupPopup() {
       seen = localStorage.getItem(SEEN_KEY) === "1";
     } catch {}
     if (seen && !PREVIEW_ALWAYS) return;
-    const timer = window.setTimeout(() => {
+    let poll = 0;
+    const show = () => {
       if (/^\/(checkout|account)/.test(window.location.pathname)) return;
       if (document.querySelector("dialog[open]")) return;
       setOpen(true);
+    };
+    const timer = window.setTimeout(() => {
+      if (!KLAVIYO_COMPANY_ID) return show();
+      const started = Date.now();
+      poll = window.setInterval(() => {
+        const ready = Boolean(klaviyoSlot.current?.childElementCount);
+        if (!ready && Date.now() - started < KLAVIYO_WAIT_MS) return;
+        window.clearInterval(poll);
+        if (!ready) setKlaviyoMissing(true);
+        show();
+      }, 200);
     }, PREVIEW_ALWAYS ? 800 : DELAY_MS);
-    return () => window.clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+      window.clearInterval(poll);
+    };
     // Started once per visit; navigating between pages does not restart it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -53,14 +71,6 @@ export function SignupPopup() {
     if (!el) return;
     if (open && !el.open) el.showModal();
     if (!open && el.open) el.close();
-  }, [open]);
-
-  useEffect(() => {
-    if (!open || !KLAVIYO_COMPANY_ID) return;
-    const timer = window.setTimeout(() => {
-      if (!klaviyoSlot.current?.childElementCount) setKlaviyoMissing(true);
-    }, 6000);
-    return () => window.clearTimeout(timer);
   }, [open]);
 
   const remember = () => {
