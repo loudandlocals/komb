@@ -24,7 +24,13 @@ const PREVIEW_ALWAYS = true;
 export function SignupPopup() {
   const pathname = usePathname();
   const dialog = useRef<HTMLDialogElement>(null);
+  const klaviyoSlot = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
+  // Klaviyo leaves its form out for some visitors (for example a profile it
+  // already knows, depending on the form's targeting). If nothing has been
+  // drawn a few seconds after the pop-up opens, show the built-in form instead
+  // of an empty panel.
+  const [klaviyoMissing, setKlaviyoMissing] = useState(false);
 
   useEffect(() => {
     let seen = false;
@@ -47,6 +53,14 @@ export function SignupPopup() {
     if (!el) return;
     if (open && !el.open) el.showModal();
     if (!open && el.open) el.close();
+  }, [open]);
+
+  useEffect(() => {
+    if (!open || !KLAVIYO_COMPANY_ID) return;
+    const timer = window.setTimeout(() => {
+      if (!klaviyoSlot.current?.childElementCount) setKlaviyoMissing(true);
+    }, 6000);
+    return () => window.clearTimeout(timer);
   }, [open]);
 
   const remember = () => {
@@ -102,13 +116,13 @@ export function SignupPopup() {
         >
           <span aria-hidden>×</span>
         </button>
-        {KLAVIYO_COMPANY_ID ? (
+        {KLAVIYO_COMPANY_ID && !klaviyoMissing ? (
           <>
             <h2 id="signup-popup-title" className="sr-only">
               Subscribe for 15% off your first order
             </h2>
             {/* Klaviyo fills this in with the form designed in Klaviyo. */}
-            <div className={`signup-klaviyo klaviyo-form-${KLAVIYO_FORM_ID} min-h-60`} />
+            <div ref={klaviyoSlot} className={`signup-klaviyo klaviyo-form-${KLAVIYO_FORM_ID} min-h-60`} />
           </>
         ) : (
           <>

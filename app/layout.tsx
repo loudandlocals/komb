@@ -87,11 +87,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ScrollReveal />
         <SignupPopup />
         {/* Klaviyo's onsite script: draws the Klaviyo form in the sign-up
-            pop-up. Loaded after the page, and only once Klaviyo is set up. */}
+            pop-up, so it loads as soon as the page is interactive (waiting for
+            the browser to be idle could leave the pop-up empty on busy pages).
+            Only once Klaviyo is set up. */}
         {process.env.NEXT_PUBLIC_KLAVIYO_COMPANY_ID && (
           <Script
             src={`https://static.klaviyo.com/onsite/js/${process.env.NEXT_PUBLIC_KLAVIYO_COMPANY_ID}/klaviyo.js?company_id=${process.env.NEXT_PUBLIC_KLAVIYO_COMPANY_ID}`}
-            strategy="lazyOnload"
+            strategy="afterInteractive"
           />
         )}
         <JsonLd
