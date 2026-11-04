@@ -62,7 +62,7 @@ export function CartDrawer() {
                       type="button"
                       className="size-9"
                       aria-label={`Decrease quantity of ${item.title}`}
-                      onClick={() => setQuantity(lineKey(item), item.quantity - 1)}
+                      onClick={() => setQuantity(lineKey(item), item.quantity - (item.step ?? 1))}
                     >
                       −
                     </button>
@@ -73,7 +73,7 @@ export function CartDrawer() {
                       type="button"
                       className="size-9"
                       aria-label={`Increase quantity of ${item.title}`}
-                      onClick={() => setQuantity(lineKey(item), item.quantity + 1)}
+                      onClick={() => setQuantity(lineKey(item), item.quantity + (item.step ?? 1))}
                     >
                       +
                     </button>

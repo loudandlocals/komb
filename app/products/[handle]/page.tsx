@@ -15,6 +15,7 @@ import { PackedSection } from "@/components/PackedSection";
 import { ProductArt } from "@/components/ProductArt";
 import { PurchasePanel } from "@/components/PurchasePanel";
 import { ROUTINE_HANDLES, WARNINGS } from "@/lib/catalog";
+import { DUO_HANDLE } from "@/lib/offers";
 import { PRODUCT_FAQ } from "@/lib/faq";
 import { ingredientsFor } from "@/lib/ingredients";
 import { formatMoney } from "@/lib/format";
@@ -56,10 +57,9 @@ export default async function ProductPage({ params }: Props) {
     ? ROUTINE_HANDLES.find((h) => h !== handle)
     : undefined;
   const pair = pairHandle ? await getProduct(pairHandle, country) : null;
-  // Both steps in routine order, for the bundle button.
-  const routine = pair
-    ? ROUTINE_HANDLES.map((h) => (h === product.handle ? product : pair))
-    : [];
+  // The Routine Duo, offered beside each of its two products once it exists
+  // in Shopify; until then the pair is sold as two separate products.
+  const duo = pair ? await getProduct(DUO_HANDLE, country) : null;
   const url = `${SITE.url}/products/${product.handle}`;
 
   const faq = PRODUCT_FAQ[product.handle];
@@ -98,6 +98,7 @@ export default async function ProductPage({ params }: Props) {
           {/* Details */}
           <div className="relative z-1 order-2 grid w-full max-w-md gap-4 max-lg:mx-auto lg:order-none lg:max-w-none xl:max-w-88">
             {product.step && <p className="eyebrow">{product.step} of the routine</p>}
+            {product.kind === "duo" && <p className="eyebrow">The two-step routine</p>}
             {rating.count > 0 && (
               <a href="#reviews" className="flex w-fit items-center gap-2 text-[0.85rem] hover:text-label">
                 <Stars rating={rating.average} />
@@ -150,7 +151,7 @@ export default async function ProductPage({ params }: Props) {
 
           {/* Purchase and details */}
           <div className="relative z-1 order-3 grid w-full max-w-md gap-5 max-lg:mx-auto lg:order-none lg:max-w-none lg:justify-self-end xl:max-w-88">
-            <PurchasePanel product={product} routine={routine} />
+            <PurchasePanel product={product} duo={duo} />
             {product.notes && (
               <ul className="text-[0.82rem] text-muted">
                 {product.notes.map((n) => (
@@ -160,7 +161,7 @@ export default async function ProductPage({ params }: Props) {
             )}
             <div className="accordion [&_details]:border-b [&_details]:border-line [&_details>p]:pb-5 [&_details>p]:text-[0.88rem] [&_details>p]:text-muted [&_summary]:py-4 [&_summary]:text-[0.72rem]">
               {product.directions && (
-                <details>
+                <details id="how-to-use" className="scroll-mt-[calc(var(--header-h)+1rem)]">
                   <summary>How to use</summary>
                   <p>{product.directions}</p>
                   {product.usageNote && <p className="-mt-2">{product.usageNote}</p>}
@@ -273,8 +274,9 @@ export default async function ProductPage({ params }: Props) {
             <p className="text-[0.95rem] text-muted">{pair.summary}</p>
           </div>
           <BuyNowButton
-            products={[product, pair]}
-            label="Buy both now"
+            products={duo ? [duo] : [product, pair]}
+            label={duo ? "Buy the Routine Duo" : "Buy both now"}
+            showPrice={Boolean(duo)}
             className="max-md:col-span-2"
           />
         </aside>

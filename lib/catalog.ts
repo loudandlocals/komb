@@ -131,6 +131,27 @@ export const CONTENT: Record<string, ProductContent> = {
       "Contains fragrance and conditioning silicones.",
     ],
   },
+  "routine-duo": {
+    kind: "duo",
+    category: "routine",
+    size: "50 mL serum + 100 mL moisturizer",
+    tagline: "Nourish, Restore, Flourish",
+    taglineFr: "Nourrir, R\u00e9parer, Rayonner",
+    oneLine: "The serum and the moisturizer, together.",
+    summary:
+      "The complete two-step routine: Botanical Hair Serum to nourish the scalp, then Renewal Hair Moisturizer to hydrate and soften the lengths.",
+    benefits: [
+      "Step one: Botanical Hair Serum for the scalp",
+      "Step two: Renewal Hair Moisturizer for the lengths",
+      "For all hair types",
+    ],
+    directions:
+      "Step one: apply one full dropper of serum to the scalp, massage gently and leave on for at least 30 minutes, or overnight. Shampoo and rinse thoroughly. Step two: work the moisturizer through wet or dry hair, section by section, then style as desired.",
+    notes: [
+      "The moisturizer contains almond oil (tree nut).",
+      "The moisturizer contains fragrance and conditioning silicones.",
+    ],
+  },
 };
 
 // Product photos in public/products, keyed by handle. `pdpUrl` is a tighter
@@ -155,59 +176,101 @@ export const LOCAL_IMAGES: Record<
     packedAlt: "Renewal Hair Moisturizer jar standing beside its cream carton",
     alt: "Komb Renewal Hair Moisturizer, a 100 mL cream jar with a wood-grain lid",
   },
+  "routine-duo": {
+    url: "/images/steps/center-image-4.jpg",
+    alt: "Komb Botanical Hair Serum and Renewal Hair Moisturizer together on a wooden tray",
+  },
 };
 
 // MOCK DATA. Used until Shopify credentials are set in .env.local.
-// Prices are the client's US dollar prices (revision list, October 2026).
-// Canadian prices come from Shopify Markets once the store is connected.
-// PLACEHOLDER SUBSCRIPTION PLANS. Not Komb's real offer: the frequencies and
-// the 10% saving are stand-ins until the client's subscription app is set up.
-// Shaped exactly like `product.sellingPlanGroups` from the Storefront API, so
-// the same code reads the real plans once the store is connected.
-const MOCK_SELLING_PLAN_GROUPS: ShopifySellingPlanGroups = {
-  nodes: [
+// Prices are the client's US dollar prices (final subscription model,
+// November 2026). Canadian prices come from Shopify Markets once set.
+// The plans mirror what is set up in Appstle: Subscribe & Save every 30 days,
+// and a 3-month supply of three units every 90 days. Shaped exactly like
+// `product.sellingPlanGroups` from the Storefront API, so the same code reads
+// the real plans once the store is connected.
+type Adjustment =
+  | { percent: number }
+  | { fixed: number };
+
+const plan = (id: string, frequency: string, adjustment: Adjustment) => ({
+  id: `gid://shopify/SellingPlan/mock-${id}`,
+  name: `Deliver every ${frequency}`,
+  recurringDeliveries: true,
+  options: [{ name: "Deliver every", value: frequency }],
+  priceAdjustments: [
     {
-      name: "Subscribe and save (placeholder)",
-      sellingPlans: {
-        nodes: [4, 6, 8].map((weeks) => ({
-          id: `gid://shopify/SellingPlan/placeholder-${weeks}-weeks`,
-          name: `Deliver every ${weeks} weeks`,
-          recurringDeliveries: true,
-          options: [{ name: "Deliver every", value: `${weeks} weeks` }],
-          priceAdjustments: [
-            {
-              adjustmentValue: {
-                __typename: "SellingPlanPercentagePriceAdjustment" as const,
-                adjustmentPercentage: 10,
-              },
+      adjustmentValue:
+        "percent" in adjustment
+          ? {
+              __typename: "SellingPlanPercentagePriceAdjustment" as const,
+              adjustmentPercentage: adjustment.percent,
+            }
+          : {
+              __typename: "SellingPlanFixedPriceAdjustment" as const,
+              price: { amount: adjustment.fixed.toFixed(2), currencyCode: "USD" },
             },
-          ],
-        })),
-      },
     },
   ],
-};
+});
+
+const mockPlans = (
+  handle: string,
+  monthly: Adjustment,
+  supply: Adjustment
+): ShopifySellingPlanGroups => ({
+  nodes: [
+    { name: "Subscribe & Save", sellingPlans: { nodes: [plan(`${handle}-30`, "30 days", monthly)] } },
+    { name: "3-month supply", sellingPlans: { nodes: [plan(`${handle}-90`, "90 days", supply)] } },
+  ],
+});
 
 const mock = (
   handle: string,
   title: string,
-  amount: number
-): Product => ({
-  handle,
-  title,
-  variantId: `mock-variant-${handle}`,
-  price: { amount, currencyCode: "USD" },
-  sellingPlans: toSellingPlans(MOCK_SELLING_PLAN_GROUPS, { amount, currencyCode: "USD" }),
-  availableForSale: true,
-  imageUrl: LOCAL_IMAGES[handle]?.url,
-  pdpImageUrl: LOCAL_IMAGES[handle]?.pdpUrl,
-  imageAlt: LOCAL_IMAGES[handle]?.alt,
-  ...CONTENT[handle],
-});
+  amount: number,
+  groups: ShopifySellingPlanGroups,
+  compareAt?: number
+): Product => {
+  const price = { amount, currencyCode: "USD" };
+  const compareAtPrice = compareAt ? { amount: compareAt, currencyCode: "USD" } : undefined;
+  return {
+    handle,
+    title,
+    variantId: `mock-variant-${handle}`,
+    price,
+    compareAtPrice,
+    sellingPlans: toSellingPlans(groups, price, compareAtPrice),
+    availableForSale: true,
+    imageUrl: LOCAL_IMAGES[handle]?.url,
+    pdpImageUrl: LOCAL_IMAGES[handle]?.pdpUrl,
+    imageAlt: LOCAL_IMAGES[handle]?.alt,
+    ...CONTENT[handle],
+  };
+};
 
+// The Duo's subscriptions are 20% off the two products' separate prices
+// ($82.98), not off its one-time price, so they are fixed prices in Appstle.
 export const MOCK_PRODUCTS: Product[] = [
-  mock("botanical-hair-serum", "Botanical Hair Serum", 43.99),
-  mock("renewal-hair-moisturizer", "Renewal Hair Moisturizer", 34.99),
+  mock(
+    "botanical-hair-serum",
+    "Botanical Hair Serum",
+    43.99,
+    mockPlans("serum", { percent: 10 }, { percent: 15 })
+  ),
+  mock(
+    "renewal-hair-moisturizer",
+    "Renewal Hair Moisturizer",
+    38.99,
+    mockPlans("moisturizer", { percent: 10 }, { percent: 15 })
+  ),
+  mock(
+    "routine-duo",
+    "Routine Duo",
+    69.99,
+    mockPlans("duo", { fixed: 66.38 }, { fixed: 66.38 }),
+    82.98
+  ),
 ];
 
 export const ROUTINE_HANDLES = ["botanical-hair-serum", "renewal-hair-moisturizer"];

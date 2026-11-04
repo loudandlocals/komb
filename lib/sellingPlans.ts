@@ -1,3 +1,4 @@
+import { SUPPLY } from "./offers";
 import type { Money, SellingPlan } from "./types";
 
 // The shape of `product.sellingPlanGroups` in the Storefront API. Subscription
@@ -57,15 +58,22 @@ export const SELLING_PLAN_FIELDS = /* GraphQL */ `
 const round = (n: number) => Math.round(n * 100) / 100;
 
 // Flattens the groups into the recurring-delivery plans the selector offers,
-// each with the price of one delivery after its first price adjustment.
+// each with the price of one unit after its first price adjustment. Plans in
+// a group named like "3-month supply" are supply plans of SUPPLY.quantity
+// units per delivery. Savings are measured against the compare-at price when
+// the product has one (the Duo's separate prices), otherwise the price.
 export function toSellingPlans(
   groups: ShopifySellingPlanGroups | null | undefined,
-  price: Money
+  price: Money,
+  compareAtPrice?: Money
 ): SellingPlan[] {
-  return (groups?.nodes ?? []).flatMap((group) =>
-    group.sellingPlans.nodes
+  const basis = compareAtPrice && compareAtPrice.amount > price.amount ? compareAtPrice : price;
+  return (groups?.nodes ?? []).flatMap((group) => {
+    const supply = SUPPLY.groupName.test(group.name);
+    const quantity = supply ? SUPPLY.quantity : 1;
+    return group.sellingPlans.nodes
       .filter((plan) => plan.recurringDeliveries)
-      .map((plan) => {
+      .map((plan): SellingPlan => {
         const adjustment = plan.priceAdjustments[0]?.adjustmentValue;
         let amount = price.amount;
         if (adjustment?.__typename === "SellingPlanPercentagePriceAdjustment") {
@@ -76,14 +84,19 @@ export function toSellingPlans(
           amount = Number(adjustment.price.amount);
         }
         amount = round(Math.max(0, amount));
+        const saved = round(Math.max(0, (basis.amount - amount) * quantity));
         return {
           id: plan.id,
           name: plan.name,
-          frequency: plan.options[0]?.value ?? plan.name,
+          kind: supply ? "supply" : "subscription",
+          // "Deliver every 4 weeks" and "4 weeks" both read as "4 weeks".
+          frequency: (plan.options[0]?.value ?? plan.name).replace(/^deliver(ed)? every\s+/i, ""),
+          quantity,
           price: { amount, currencyCode: price.currencyCode },
+          savings: { amount: saved, currencyCode: price.currencyCode },
           percentOff:
-            price.amount > 0 ? Math.round((1 - amount / price.amount) * 100) : 0,
+            basis.amount > 0 ? Math.round((1 - amount / basis.amount) * 100) : 0,
         };
-      })
-  );
+      });
+  });
 }

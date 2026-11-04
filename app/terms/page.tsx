@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CompanyContact, LegalPage } from "@/components/LegalPage";
+import { WELCOME_OFFER } from "@/lib/offers";
 import { SITE } from "@/lib/site";
 
 // Draft written for the client to review. Not legal advice; Komb Hair Inc.
@@ -75,6 +76,14 @@ export default function TermsPage() {
             to that renewal.
           </li>
           <li>
+            We email you 5 days before each renewal ships and is charged.
+          </li>
+          <li>
+            Discount and affiliate codes apply to the first order of a subscription only,
+            not to renewals. During a sitewide sale, a subscription order gets either the
+            sale discount or the subscription discount, whichever is better, not both.
+          </li>
+          <li>
             We will tell you in advance by email about any change to the price of your
             subscription.
           </li>
@@ -84,7 +93,7 @@ export default function TermsPage() {
       <section>
         <h2>Offers and discount codes</h2>
         <p>
-          Offers such as 15% off a first order for joining our emails are limited to one
+          Offers such as {WELCOME_OFFER.percent}% off a first order for joining our emails are limited to one
           per customer, cannot be combined with other offers unless we say so, have no
           cash value, and may end at any time. [Any exclusions to be confirmed.]
         </p>

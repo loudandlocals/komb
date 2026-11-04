@@ -23,6 +23,8 @@ export type CartItem = {
   // Set when the line is a subscription; `price` is then the plan's price.
   sellingPlanId?: string;
   planName?: string;
+  // Units per delivery on a 3-month supply: the quantity moves in these steps.
+  step?: number;
 };
 
 // The same product one-time and on a plan are separate cart lines.

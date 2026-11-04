@@ -1,5 +1,5 @@
 // "other" covers any Shopify product without editorial content in lib/catalog.ts
-export type ProductKind = "serum" | "moisturizer" | "other";
+export type ProductKind = "serum" | "moisturizer" | "duo" | "other";
 
 export type Money = { amount: number; currencyCode: string };
 
@@ -12,6 +12,9 @@ export type Product = {
   title: string;
   variantId: string;
   price: Money;
+  // Shopify's compare-at price. On the Routine Duo it is the two products'
+  // separate prices, which the subscription savings are measured against.
+  compareAtPrice?: Money;
   availableForSale: boolean;
   imageUrl?: string;
   // Tighter crop for the product page; falls back to imageUrl.
@@ -26,16 +29,24 @@ export type Product = {
 export type SellingPlan = {
   id: string;
   name: string;
-  // How often it is delivered, as the store words it: "Every 4 weeks".
+  // "subscription" is the regular Subscribe & Save plan; "supply" is the
+  // 3-month supply, several units shipped together.
+  kind: "subscription" | "supply";
+  // How often it is delivered, as the store words it: "Every 30 days".
   frequency: string;
-  // Price of one delivery on this plan.
+  // Units in each delivery: 1, or 3 for the 3-month supply.
+  quantity: number;
+  // Price of one unit on this plan; a delivery costs `price` × `quantity`.
   price: Money;
+  // Saving per delivery against the regular price (or the compare-at price
+  // when there is one), and the same as a whole-number percentage.
+  savings: Money;
   percentOff: number;
 };
 
 export type ProductContent = {
   kind: ProductKind;
-  category: "scalp" | "lengths" | "other";
+  category: "scalp" | "lengths" | "routine" | "other";
   titleFr?: string;
   size?: string;
   // From the carton, for search-engine product data.

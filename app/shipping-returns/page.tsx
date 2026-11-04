@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CompanyContact, LegalPage } from "@/components/LegalPage";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/offers";
 import { SITE } from "@/lib/site";
 
 // Draft. Everything in [square brackets] is a business decision for the
@@ -27,9 +28,13 @@ export default function ShippingReturnsPage() {
       <section>
         <h2>Shipping costs</h2>
         <ul>
-          <li>Free shipping on all subscription orders.</li>
-          <li>Free shipping on orders over $50 [currency to be confirmed].</li>
-          <li>Orders under $50: [flat rate or calculated at checkout].</li>
+          <li>Free shipping on orders of ${FREE_SHIPPING_THRESHOLD} USD or more [Canadian threshold to be confirmed].</li>
+          <li>Free shipping on every Routine Duo subscription and every 3-month supply, whatever the order total.</li>
+          <li>
+            Serum or moisturizer subscriptions on their own follow the ${FREE_SHIPPING_THRESHOLD} rule, so
+            shipping is charged on deliveries under ${FREE_SHIPPING_THRESHOLD}.
+          </li>
+          <li>Orders under ${FREE_SHIPPING_THRESHOLD}: [flat rate or calculated at checkout].</li>
         </ul>
         <p>Any taxes and duties are shown at checkout.</p>
       </section>
@@ -72,8 +77,9 @@ export default function ShippingReturnsPage() {
       <section>
         <h2>Subscriptions</h2>
         <p>
-          You can pause, skip or cancel a subscription at any time from your account, so
-          you only receive what you need. See our <Link href="/terms">Terms of Use</Link>{" "}
+          You can skip, pause, change or cancel a subscription at any time from your
+          account, with no commitment, so you only receive what you need. We email you
+          5 days before each delivery ships and is charged. See our <Link href="/terms">Terms of Use</Link>{" "}
           for details.
         </p>
       </section>
