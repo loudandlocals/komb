@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { WELCOME_OFFER } from "@/lib/offers";
 import { NewsletterForm } from "./NewsletterForm";
 
 const SEEN_KEY = "komb-signup-popup";
@@ -18,7 +19,7 @@ const KLAVIYO_WAIT_MS = 8_000;
 // every page load and ignores "already seen". Set back to false before launch.
 const PREVIEW_ALWAYS = true;
 
-// "Subscribe for 15% off your first order", offered once, 15 seconds into a
+// "Subscribe for 10% off your first order", offered once, 15 seconds into a
 // visit. Closing it or signing up means it does not come back. It never opens
 // over checkout or the account page, or on top of another open dialog such as
 // the cart. The discount code itself is sent by the email provider's welcome
@@ -129,7 +130,7 @@ export function SignupPopup() {
         {KLAVIYO_COMPANY_ID && !klaviyoMissing ? (
           <>
             <h2 id="signup-popup-title" className="sr-only">
-              Subscribe for 15% off your first order
+              Subscribe for {WELCOME_OFFER.percent}% off your first order
             </h2>
             {/* Klaviyo fills this in with the form designed in Klaviyo. */}
             <div ref={klaviyoSlot} className={`signup-klaviyo klaviyo-form-${KLAVIYO_FORM_ID} min-h-60`} />
@@ -143,7 +144,7 @@ export function SignupPopup() {
               id="signup-popup-title"
               className="font-caslon text-[clamp(1.7rem,4vw,2.3rem)] leading-tight tracking-[-0.02em] text-offwhite italic"
             >
-              Subscribe for 15% off <span className="text-gold-light">your first order</span>
+              Subscribe for {WELCOME_OFFER.percent}% off <span className="text-gold-light">your first order</span>
             </h2>
             <p className="text-[0.95rem] text-offwhite/85">
               Join our emails for notes on scalp care, new arrivals and routine tips.

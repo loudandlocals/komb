@@ -20,6 +20,19 @@
         "3100"
       ],
       "port": 3100
+    },
+    {
+      "name": "komb-mock",
+      "runtimeExecutable": "env",
+      "runtimeArgs": [
+        "SHOPIFY_STORE_DOMAIN=",
+        "npx",
+        "next",
+        "dev",
+        "-p",
+        "3200"
+      ],
+      "port": 3200
     }
   ]
 }

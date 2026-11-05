@@ -2,11 +2,12 @@
 
 import { useId, useState } from "react";
 import { formatMoney } from "@/lib/format";
-import type { Product } from "@/lib/types";
+import { DEFAULT_PURCHASE, FREE_SHIPPING_THRESHOLD } from "@/lib/offers";
+import type { Money, Product, ProductKind, SellingPlan } from "@/lib/types";
 import { AddBundleButton, AddToCartButton } from "./BuyButtons";
 
 const option =
-  "flex cursor-pointer items-center gap-3 border px-3.5 py-3 text-[0.9rem] font-normal transition-colors has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ink";
+  "flex cursor-pointer items-center gap-3 border-transparent px-3.5 py-3 text-[0.9rem] font-normal has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-ink";
 
 // The chosen option is filled with the greige tint (and `on-greige` darkens the
 // muted text to keep it at AA); the radio dot still marks it without colour.
@@ -16,87 +17,141 @@ const idle = "border-line";
 const chevron =
   "appearance-none bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2012%208%22%20fill=%22none%22%20stroke=%22%23272522%22%20stroke-width=%221.5%22%3E%3Cpath%20d=%22M1%201.5l5%205%205-5%22/%3E%3C/svg%3E')] bg-size-[0.7rem] bg-position-[right_0.9rem_center] bg-no-repeat pr-9 pl-3";
 
-// Product page purchase controls. When the product has subscription plans, a
-// one-time or subscribe choice sits on top, with a delivery frequency menu
-// while subscribing; a product with no plans shows none of it. Below: the
-// quantity stepper, then Add to cart, whose price follows the choice.
+type Choice = "one-time" | "subscription" | "supply";
+
+// "3 serums", "3 Duos": what a 3-month supply delivery holds.
+function units(kind: ProductKind, title: string, n: number) {
+  if (kind === "serum") return `${n} serums`;
+  if (kind === "moisturizer") return `${n} moisturizers`;
+  if (kind === "duo") return `${n} Duos (${n} serums + ${n} moisturizers)`;
+  return `${n} × ${title}`;
+}
+
+const times = (m: Money, n: number): Money => ({ ...m, amount: Math.round(m.amount * n * 100) / 100 });
+
+// Product page purchase controls. With subscription plans in Shopify, the
+// choices are listed 3-month supply first (marked "Best value"), then
+// Subscribe & Save, then one-time, each with its price per delivery and its
+// saving; a product with no plans shows none of it. Below: the quantity
+// stepper, then Add to cart, whose price follows the choice.
 export function PurchasePanel({
   product,
-  routine = [],
+  duo,
 }: {
   product: Product;
-  // Both routine products, when this product is one of them: offers the pair
-  // as a quieter second button under Add to cart.
-  routine?: Product[];
+  // The Routine Duo, offered as a quieter second button under Add to cart on
+  // the serum and moisturizer pages.
+  duo?: Product | null;
 }) {
   const [quantity, setQuantity] = useState(1);
   const plans = product.sellingPlans ?? [];
-  const subscriptionOnly = Boolean(product.requiresSellingPlan) && plans.length > 0;
-  const [subscribe, setSubscribe] = useState(subscriptionOnly);
-  const [planId, setPlanId] = useState(plans[0]?.id);
+  const byKind = {
+    supply: plans.filter((p) => p.kind === "supply"),
+    subscription: plans.filter((p) => p.kind === "subscription"),
+  };
+  const offered: Choice[] = [
+    ...(byKind.supply.length ? (["supply"] as const) : []),
+    ...(byKind.subscription.length ? (["subscription"] as const) : []),
+    ...(product.requiresSellingPlan && plans.length ? [] : (["one-time"] as const)),
+  ];
+  const [choice, setChoice] = useState<Choice>(
+    offered.includes(DEFAULT_PURCHASE) ? DEFAULT_PURCHASE : offered[0]
+  );
+  const [planIds, setPlanIds] = useState({
+    supply: byKind.supply[0]?.id,
+    subscription: byKind.subscription[0]?.id,
+  });
   const name = useId();
   const frequencyId = useId();
 
-  const chosen = plans.find((p) => p.id === planId) ?? plans[0];
-  const plan = subscribe ? chosen : undefined;
-  // The saving is named in the label only when every plan shares it.
-  const saving =
-    plans.length > 0 && plans.every((p) => p.percentOff === plans[0].percentOff)
-      ? plans[0].percentOff
-      : 0;
+  const chosenOf = (kind: "supply" | "subscription"): SellingPlan | undefined =>
+    byKind[kind].find((p) => p.id === planIds[kind]) ?? byKind[kind][0];
+  const plan = choice === "one-time" ? undefined : chosenOf(choice);
+  const shipsFree = (kind: "supply" | "subscription") =>
+    kind === "supply" || product.kind === "duo";
+
+  function planOption(kind: "supply" | "subscription") {
+    const p = chosenOf(kind);
+    if (!p) return null;
+    const selected = choice === kind;
+    const list = byKind[kind];
+    const details = [
+      kind === "supply"
+        ? `${units(product.kind, product.title, p.quantity)} ship together every ${p.frequency}`
+        : `Delivered every ${p.frequency}`,
+      p.savings.amount > 0 && `Save ${formatMoney(p.savings)} (${p.percentOff}%)`,
+      shipsFree(kind) ? "Free shipping" : null,
+    ].filter(Boolean);
+    return (
+      <div key={kind} className={`border transition-colors ${selected ? active : idle}`}>
+        <label className={option}>
+          <input
+            type="radio"
+            name={name}
+            checked={selected}
+            onChange={() => setChoice(kind)}
+            className="size-4 shrink-0 accent-ink"
+          />
+          <span className="grid flex-1 gap-0.5">
+            <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+              {kind === "supply" ? "3-month supply" : "Subscribe & Save"}
+              {kind === "supply" && (
+                <span className="bg-ink px-2 py-0.5 text-[0.62rem] tracking-[0.14em] text-offwhite uppercase">
+                  Best value
+                </span>
+              )}
+            </span>
+            <span className="text-[0.78rem] text-muted">{details.join(" · ")}</span>
+          </span>
+          <span className="text-right">{formatMoney(times(p.price, p.quantity))}</span>
+        </label>
+        {selected && list.length > 1 && (
+          <div className="flex items-center gap-3 px-3.5 pb-3 text-[0.82rem]">
+            <label htmlFor={frequencyId} className="font-normal text-muted">
+              Deliver every
+            </label>
+            <select
+              id={frequencyId}
+              value={p.id}
+              onChange={(e) => setPlanIds((ids) => ({ ...ids, [kind]: e.target.value }))}
+              className={`min-h-9 flex-1 border border-ink/50 bg-offwhite font-normal ${chevron}`}
+            >
+              {list.map((o) => (
+                <option key={o.id} value={o.id}>
+                  {o.frequency}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-2.5">
       {plans.length > 0 && (
         <fieldset className="mb-1.5 grid gap-2">
           <legend className="sr-only">Purchase options</legend>
-          {!subscriptionOnly && (
-            <label className={`${option} ${subscribe ? idle : active}`}>
-              <input
-                type="radio"
-                name={name}
-                checked={!subscribe}
-                onChange={() => setSubscribe(false)}
-                className="size-4 shrink-0 accent-ink"
-              />
-              <span className="flex-1">One-time purchase</span>
-              <span>{formatMoney(product.price)}</span>
-            </label>
-          )}
-          <div className={`border transition-colors ${subscribe ? active : idle}`}>
-            <label className={`${option} border-transparent`}>
-              <input
-                type="radio"
-                name={name}
-                checked={subscribe}
-                onChange={() => setSubscribe(true)}
-                className="size-4 shrink-0 accent-ink"
-              />
-              <span className="flex-1">
-                Subscribe{saving > 0 && <> and save {saving}%</>}
-              </span>
-              <span>{formatMoney(chosen.price)}</span>
-            </label>
-            {subscribe && (
-              <div className="flex items-center gap-3 px-3.5 pb-3 text-[0.82rem]">
-                <label htmlFor={frequencyId} className="font-normal text-muted">
-                  Deliver every
+          {offered.map((kind) =>
+            kind === "one-time" ? (
+              <div key={kind} className={`border transition-colors ${choice === kind ? active : idle}`}>
+                <label className={option}>
+                  <input
+                    type="radio"
+                    name={name}
+                    checked={choice === kind}
+                    onChange={() => setChoice(kind)}
+                    className="size-4 shrink-0 accent-ink"
+                  />
+                  <span className="flex-1">One-time purchase</span>
+                  <span>{formatMoney(product.price)}</span>
                 </label>
-                <select
-                  id={frequencyId}
-                  value={chosen.id}
-                  onChange={(e) => setPlanId(e.target.value)}
-                  className={`min-h-9 flex-1 border border-ink/50 bg-offwhite font-normal ${chevron}`}
-                >
-                  {plans.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.frequency}
-                    </option>
-                  ))}
-                </select>
               </div>
-            )}
-          </div>
+            ) : (
+              planOption(kind)
+            )
+          )}
         </fieldset>
       )}
 
@@ -138,11 +193,18 @@ export function PurchasePanel({
           {plan && <> · {plan.name}</>}
         </p>
       )}
-      {routine.length > 1 && (
+      {plans.length > 0 && (
+        <p className="text-[0.8rem] text-muted">
+          Free shipping on orders over ${FREE_SHIPPING_THRESHOLD}, and on Duo and 3-month
+          subscriptions. Skip, pause, change or cancel your subscription anytime from your
+          account.
+        </p>
+      )}
+      {duo && (
         <AddBundleButton
-          products={routine}
-          label="Add both steps"
-          ariaLabel={`Add both steps to cart: ${routine.map((p) => p.title).join(" and ")}`}
+          products={[duo]}
+          label="Add the Routine Duo"
+          ariaLabel="Add the Routine Duo to cart: Botanical Hair Serum and Renewal Hair Moisturizer"
           className="min-h-11 w-full px-2.5 text-[0.68rem] tracking-[0.12em]"
         />
       )}

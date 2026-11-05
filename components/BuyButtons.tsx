@@ -5,10 +5,12 @@ import { formatMoney } from "@/lib/format";
 import type { Product, SellingPlan } from "@/lib/types";
 import { useCart, type CartItem } from "./CartProvider";
 
-// With a plan, the line carries the plan's id and its per-delivery price.
+// With a plan, the line carries the plan's id and its per-unit price. A
+// 3-month supply line moves in steps of its units per delivery.
 function toItem(p: Product, plan?: SellingPlan): Omit<CartItem, "quantity"> {
   return {
     ...(plan && { sellingPlanId: plan.id, planName: plan.name }),
+    ...(plan && plan.quantity > 1 && { step: plan.quantity }),
     variantId: p.variantId,
     handle: p.handle,
     title: p.title,
@@ -42,7 +44,10 @@ export function BuyNowButton({
 }) {
   const { checkout, pending } = useCart();
   const total = {
-    amount: products.reduce((n, p) => n + (plan?.price ?? p.price).amount * quantity, 0),
+    amount: products.reduce(
+      (n, p) => n + (plan?.price ?? p.price).amount * quantity * (plan?.quantity ?? 1),
+      0
+    ),
     currencyCode: products[0]?.price.currencyCode ?? "USD",
   };
   const [mine, setMine] = useState(false);
@@ -57,7 +62,9 @@ export function BuyNowButton({
       disabled={pending || soldOut}
       onClick={async () => {
         setMine(true);
-        await checkout(products.map((p) => ({ ...toItem(p, plan), quantity })));
+        await checkout(
+          products.map((p) => ({ ...toItem(p, plan), quantity: quantity * (plan?.quantity ?? 1) }))
+        );
         setMine(false);
       }}
     >
@@ -128,6 +135,7 @@ export function AddToCartButton({
   // Dark, filled style for places where this is the main action.
   primary?: boolean;
   // Adds the total for the chosen quantity to the label: "Add to cart — $48".
+  // On a 3-month supply the quantity counts deliveries of the plan's units.
   showPrice?: boolean;
 }) {
   const { add } = useCart();
@@ -136,7 +144,7 @@ export function AddToCartButton({
       type="button"
       className={`btn ${primary ? "btn-primary" : "btn-outline"} ${className}`}
       disabled={!product.availableForSale}
-      onClick={() => add(toItem(product, plan), quantity)}
+      onClick={() => add(toItem(product, plan), quantity * (plan?.quantity ?? 1))}
     >
       Add to cart
       {showPrice && (
@@ -147,7 +155,7 @@ export function AddToCartButton({
           <span className="sr-only">, </span>
           {formatMoney({
             ...product.price,
-            amount: (plan?.price ?? product.price).amount * quantity,
+            amount: (plan?.price ?? product.price).amount * quantity * (plan?.quantity ?? 1),
           })}
         </>
       )}

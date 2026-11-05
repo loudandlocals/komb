@@ -59,7 +59,7 @@ const PRODUCT_FIELDS = /* GraphQL */ `
     featuredImage { url altText }
     ${SELLING_PLAN_FIELDS}
     variants(first: 1) {
-      nodes { id availableForSale price { amount currencyCode } }
+      nodes { id availableForSale price { amount currencyCode } compareAtPrice { amount currencyCode } }
     }
   }
 `;
@@ -78,6 +78,7 @@ type ShopifyProduct = {
       id: string;
       availableForSale: boolean;
       price: { amount: string; currencyCode: string };
+      compareAtPrice: { amount: string; currencyCode: string } | null;
     }[];
   };
 };
@@ -98,6 +99,9 @@ function toProduct(p: ShopifyProduct): Product | null {
     amount: Number(variant.price.amount),
     currencyCode: variant.price.currencyCode,
   };
+  const compareAtPrice = variant.compareAtPrice
+    ? { amount: Number(variant.compareAtPrice.amount), currencyCode: variant.compareAtPrice.currencyCode }
+    : undefined;
   return {
     // Numeric Shopify product ID, which Judge.me uses to file reviews.
     productId: p.id.split("/").pop(),
@@ -105,7 +109,8 @@ function toProduct(p: ShopifyProduct): Product | null {
     title: p.title,
     variantId: variant.id,
     price,
-    sellingPlans: toSellingPlans(p.sellingPlanGroups, price),
+    compareAtPrice,
+    sellingPlans: toSellingPlans(p.sellingPlanGroups, price, compareAtPrice),
     requiresSellingPlan: p.requiresSellingPlan,
     availableForSale: p.availableForSale && variant.availableForSale,
     // The site's own framed product shots win for the products it knows, so

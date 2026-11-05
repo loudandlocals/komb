@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { SHIPPING_BANNER } from "@/lib/offers";
 import { ACCOUNT_URL } from "@/lib/site";
 import { useCart } from "./CartProvider";
 import { Logo } from "./Logo";
@@ -62,7 +63,7 @@ export function Header() {
       }`}
     >
       <p className="flex h-(--bar-h) items-center justify-center bg-umber px-4 font-caslon text-[0.8rem] font-normal tracking-[0.04em] text-offwhite italic [text-shadow:none]">
-        Free shipping on subscriptions and orders over $50
+        {SHIPPING_BANNER}
       </p>
       <div className="container-site grid h-17 grid-cols-[1fr_auto_1fr] items-center">
         <button

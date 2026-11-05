@@ -9,6 +9,7 @@ import { IngredientStrip } from "@/components/IngredientStrip";
 import { ProductShowcase } from "@/components/ProductShowcase";
 import { StickyBuyBar } from "@/components/StickyBuyBar";
 import { ROUTINE_HANDLES } from "@/lib/catalog";
+import { DUO_HANDLE } from "@/lib/offers";
 import { HOME_FAQ } from "@/lib/faq";
 import { INGREDIENTS } from "@/lib/ingredients";
 import { visitorCountry } from "@/lib/market";
@@ -84,6 +85,10 @@ export default async function HomePage() {
   const routine = ROUTINE_HANDLES.map((h) => products.find((p) => p.handle === h)).filter(
     (p) => p !== undefined
   );
+  // "Buy the routine" sells the Routine Duo once it exists in Shopify, and the
+  // two products separately until then.
+  const duo = products.find((p) => p.handle === DUO_HANDLE);
+  const routineBuy = duo ? [duo] : routine;
 
   const needs = [
     {
@@ -154,7 +159,7 @@ export default async function HomePage() {
               {routine.length === 2 && (
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                   <BuyNowButton
-                    products={routine}
+                    products={routineBuy}
                     className={HERO_BUTTON}
                     label="Buy the routine"
                     showPrice
@@ -188,7 +193,7 @@ export default async function HomePage() {
             {/* Phones: the photo is too short for its copy block, so Buy now lives here */}
             {routine.length === 2 && (
               <BuyNowButton
-                products={routine}
+                products={routineBuy}
                 className={`md:hidden ${HERO_BUTTON}`}
                 label="Buy the routine"
                 showPrice
@@ -207,7 +212,7 @@ export default async function HomePage() {
             The essentials, <em>start to ends</em>
           </h2>
         </header>
-        <ProductShowcase products={products} />
+        <ProductShowcase products={routine} />
         {/* Facts straight from the label, close to the first products. */}
         <ul
           className="mt-[clamp(2.5rem,5vw,4rem)] flex flex-wrap justify-center gap-x-8 gap-y-2 text-center text-[0.72rem] font-medium tracking-[0.16em] text-muted uppercase"
@@ -265,7 +270,7 @@ export default async function HomePage() {
         </h2>
         <DifferentCarousel slides={DIFFERENT}>
           {routine.length === 2 && (
-            <BuyNowButton products={routine} label="Buy the routine" showPrice />
+            <BuyNowButton products={routineBuy} label="Buy the routine" showPrice />
           )}
         </DifferentCarousel>
       </section>
@@ -322,7 +327,7 @@ export default async function HomePage() {
 
         {routine.length === 2 && (
           <p className="mt-[clamp(2.5rem,5vw,4rem)] text-center">
-            <BuyNowButton products={routine} label="Buy the routine" showPrice />
+            <BuyNowButton products={routineBuy} label="Buy the routine" showPrice />
           </p>
         )}
       </section>
@@ -393,7 +398,7 @@ export default async function HomePage() {
               <div className="flex flex-wrap items-center gap-x-7 gap-y-4">
                 {routine.length === 2 && (
                   <BuyNowButton
-                    products={routine}
+                    products={routineBuy}
                     label="Buy the routine"
                     showPrice
                   />
@@ -407,7 +412,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {routine.length === 2 && <StickyBuyBar products={routine} />}
+      {routine.length === 2 && <StickyBuyBar products={routineBuy} />}
     </>
   );
 }
